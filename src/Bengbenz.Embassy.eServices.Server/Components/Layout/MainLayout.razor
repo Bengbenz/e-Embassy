@@ -1,12 +1,57 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemingProvider />
+<MudThemeProvider/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudImage Src="img/armoiries_rca.png" Alt="Armoiries RCA" Width="70" Elevation="0" Class="mx-6"/>
+        <div Class="mt-4">
+            <MudText Typo="Typo.body2" Align="Align.Justify">
+                Ambassade de la République
+                <MudText Typo="Typo.body2" Inline="false" Align="Align.Center">Centrafricaine en France</MudText>
+                <MudText Typo="Typo.body2" Inline="false" Color="Color.Success" Align="Align.Center">Unité - Dignité - Travail</MudText>
+            </MudText>
+        </div>
+        <MudSpacer/>
+        <MudText Typo="Typo.h5" Class="ml-3">e-Embassy</MudText>
+        <MudSpacer/>
+        <MudMenu StartIcon="@Icons.Material.Filled.Language" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Label="Français" Color="Color.Primary" Variant="Variant.Filled">
+            <MudMenuItem>Français</MudMenuItem>
+            <MudMenuItem>Anglais</MudMenuItem>
+            <MudMenuItem>Espagnol</MudMenuItem>
+            <MudMenuItem>Sango</MudMenuItem>
+        </MudMenu>
+        <MudBadge Content="3" Color="Color.Success" Overlap="true" Class="mx-6 my-4">
+            <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart" Color="Color.Inherit" />
+        </MudBadge>
+        <MudBadge Content="35" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
+            <MudIcon Icon="@Icons.Material.Outlined.NotificationsNone" Color="Color.Inherit" />
+        </MudBadge>
+        <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <ActivatorContent>
+                <MudBadge Dot="true" Color="Color.Info" Class="mx-6 my-4">
+                    <MudAvatar Size="Size.Medium"> <!--Color="Color.Primary" Variant="Variant.Outlined"> -->
+                        <MudImage Src="img/carte_rca_simple.png" Alt="Carte rca simple"/>
+                    </MudAvatar>
+                    <!--<MudIcon Icon="@Icons.Material.Outlined.Person" Color="Color.Inherit"/> -->
+                </MudBadge>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.Outlined.ManageAccounts">Mes informations personnelles</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.History">Mes demandes</MudMenuItem>
+                <MudSpacer/>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Logout">Me déconnecter</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Caleb BENGUELET<MudText Typo="Typo.body2" Inline="false" Class="mud-text-secondary">Super Admin</MudText></MudText>
+        </MudDrawerHeader>
+        <NavMenu/>
     </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
         @Body
@@ -16,7 +61,7 @@
 @code {
     private bool _drawerOpen = true;
 
-    private void DrawerToggle()
+    private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
     }

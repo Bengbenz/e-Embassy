@@ -1,17 +1,30 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
-	<MudNavLink Href="auth" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Auth Required</MudNavLink>
+﻿<MudPaper Width="250px" Elevation="0" Class="py-3">
+	<MudNavMenu>
+		<MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Accueil</MudNavLink>
+		<MudNavLink Href="/mes-demandes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History">Mes demandes</MudNavLink>
+		<MudNavGroup Title="Services" Icon="@Icons.Material.Outlined.DesignServices" @bind-Expanded=_expanded>
+			<MudNavLink Href="/services/aux-etrangers" Icon="@Icons.Material.Outlined.Contacts">Aux étrangers</MudNavLink>
+			<MudNavLink Href="/services/aux-centrafricains" Icon="@Icons.Material.Outlined.ContactMail">Aux Centrafricains</MudNavLink>
+		</MudNavGroup>
+		<MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
+		<MudNavLink Href="auth" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Auth Required</MudNavLink>
+	</MudNavMenu>
+</MudPaper>
+<MudSpacer/>
+<MudPaper Width="250px" Elevation="0" Class="py-3">
+	<MudNavMenu>
+		<AuthorizeView>
+			<Authorized>
+				<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@context.User.Identity?.Name</MudNavLink>
+			</Authorized>
+			<NotAuthorized>
+				<MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Register</MudNavLink>
+				<MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
+			</NotAuthorized>
+		</AuthorizeView>
+	</MudNavMenu>
+</MudPaper>
 
-	<AuthorizeView>
-		<Authorized>
-			<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@context.User.Identity?.Name</MudNavLink>
-		</Authorized>
-		<NotAuthorized>
-			<MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Register</MudNavLink>
-			<MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
-		</NotAuthorized>
-	</AuthorizeView>
-
-</MudNavMenu>
+@code {
+	bool _expanded = true;
+}
