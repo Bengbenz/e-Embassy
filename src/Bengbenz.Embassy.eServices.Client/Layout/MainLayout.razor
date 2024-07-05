@@ -1,0 +1,113 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_themeManager.Theme" />
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudLayout>
+    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
+    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+    <MudAppBar Elevation="10">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())"/>
+        <MudStack Spacing="4" Row="true">
+            <MudLink Href="/">
+                <MudImage Src="img/armoiries_rca.png" Alt="Armoiries RCA" Width="70" Elevation="0"/>
+            </MudLink>
+            <MudStack Spacing="0">
+                <MudText Typo="Typo.body2" Align="Align.Justify">Ambassade de la République</MudText>
+                <MudText Typo="Typo.body2" Inline="false" Align="Align.Center">Centrafricaine en France</MudText>
+                <MudDivider DividerType="DividerType.Middle"/>
+                <MudText Typo="Typo.subtitle2" Inline="false" Color="Color.Success" Align="Align.Center">Unité - Dignité - Travail</MudText>
+            </MudStack>
+        </MudStack>
+        <MudSpacer/>
+        <MudText Typo="Typo.h5" Class="ml-3">e-Embassy</MudText>
+        <MudSpacer/>
+        <MudTooltip Text="Votre Panier">
+            <MudBadge Content="3" Color="Color.Success" Overlap="true" Class="mx-4 my-4">
+                <MudIconButton Icon="@Icons.Material.Outlined.ShoppingCart" Color="Color.Inherit"/>
+            </MudBadge>
+        </MudTooltip>
+        <MudDivider Vertical="true"/>
+        <MudMenu Class="ml-6" StartIcon="@Icons.Material.Filled.Language" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Label="Français (France)" Color="Color.Primary" Variant="Variant.Filled">
+            <MudMenuItem>Français (France)</MudMenuItem>
+            <MudMenuItem>English (United States)</MudMenuItem>
+            <MudMenuItem>Español (España)</MudMenuItem>
+            <MudMenuItem>Sangö (Centrafrique)</MudMenuItem>
+        </MudMenu>
+        <MudTooltip Text="Notifications">
+            <MudBadge Content="35" Color="Color.Error" Overlap="true" Class="mx-4 my-4">
+                <MudIconButton Icon="@Icons.Material.Outlined.NotificationsNone" Color="Color.Inherit"/>
+            </MudBadge>
+        </MudTooltip>
+        <MudMenu Class="ml-4 mt-1" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopRight"> <!-- ActivationEvent="@MouseEvent.MouseOver"-->
+            <ActivatorContent>
+                <MudBadge Color="Color.Warning" Overlap="true" Bordered="true">
+                    <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
+                        <MudImage Src="img/user.png" Alt="Default user image" ObjectFit="ObjectFit.Fill" ObjectPosition="ObjectPosition.Center"/>
+                    </MudAvatar>
+                </MudBadge>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuitem>
+                    <MudStack Spacing="2" Row="true" Class="m-3">
+                        <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
+                            <MudImage Src="img/user.png" Alt="Default user image" ObjectFit="ObjectFit.Fill" ObjectPosition="ObjectPosition.Center"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.body1" Align="Align.Justify" Class="mt-2">Caleb BENGUELET</MudText>
+                    </MudStack>
+                </MudMenuitem>
+                <MudDivider Class="mb-auto"/>
+                <MudMenuItem Icon="@Icons.Material.Outlined.ManageAccounts" Href="/Account/Manage">Mon compte</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.History" Href="/mes-demandes">Mes demandes</MudMenuItem>
+                <MudDivider Class="mb-auto"/>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Logout" Href="/Account/Logout">Me déconnecter</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
+        <MudDrawerHeader>
+            <MudStack Spacing="2" Row="true">
+                <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
+                    <MudImage Src="img/user.png" Alt="Default user image" ObjectFit="ObjectFit.Fill" ObjectPosition="ObjectPosition.Center"/>
+                </MudAvatar>
+                <MudStack AlignItems="AlignItems.Start" Spacing="0">
+                    <MudText Typo="Typo.body1" Align="Align.Justify">Caleb BENGUELET</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Super Admin</MudText>
+                </MudStack>
+            </MudStack>
+        </MudDrawerHeader>
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent Class="mt-16 pa-4">
+        <!--<MudProgressLinear Color="Color.Primary" Indeterminate="true" /> -->
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private ThemeManagerTheme _themeManager = new();
+    private bool _themeManagerOpen;
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    
+    void OpenThemeManager(bool value)
+    {
+        _themeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+}

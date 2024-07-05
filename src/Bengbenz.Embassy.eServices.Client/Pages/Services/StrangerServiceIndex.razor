@@ -1,13 +1,13 @@
-﻿@page "/weather"
+﻿@page "/services/aux-etrangers"
 
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>CAR e-Embassy - Services aux étrangers</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Weather forecast</MudText>
+<MudText Typo="Typo.h4" GutterBottom="true">Services aux étrangers</MudText>
 <MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
 
-@if (forecasts is null)
+@if (forecasts == null)
 {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
 }
@@ -53,7 +53,7 @@ else
     private readonly List<BreadcrumbItem> _items =
     [
         new BreadcrumbItem("Accueil", href: "/"),
-        new BreadcrumbItem("Weather", href: null, disabled: true)
+        new BreadcrumbItem("Services aux étrangers", href: null, disabled: true)
     ];
 
     private class WeatherForecast
