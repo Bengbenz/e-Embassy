@@ -1,0 +1,49 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudLayout Class="row authentication coming-soon mx-0">
+    <div class="col-xl-6 col-lg-7 d-lg-block d-none px-0">
+        <div class="cover p-5">
+            <MudToolBar>
+                <MudStack Spacing="2" Row="true">
+                    <MudLink Href="/">
+                        <MudImage Src="img/armoiries_rca.png" Alt="Armoiries RCA" Width="70" Elevation="0"/>
+                    </MudLink>
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.body1" Align="Align.Justify" Class="shades-text text-white">Ambassade de la République</MudText>
+                        <MudText Typo="Typo.body1" Inline="false" Align="Align.Center" Class="shades-text text-white">Centrafricaine en France</MudText>
+                        <MudDivider DividerType="DividerType.Middle"/>
+                        <MudText Typo="Typo.body2" Inline="false" Color="Color.Tertiary" Align="Align.Center">Unité - Dignité - Travail</MudText>
+                    </MudStack>
+                </MudStack>
+                <MudSpacer/>
+                <strong><MudText Typo="Typo.h4" Style="font-weight: 1000;" Class="shades-text text-white">e-Embassy</MudText></strong>
+            </MudToolBar>
+            <MudContainer Class="authentication-page authentication-img d-flex justify-center align-content-center pt-20" width="100%" height="100%">
+                <MudImage Src="img/login.png" class="mx-auto"/>
+            </MudContainer>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-5 col-12">
+        <div class="authentication-cover">
+            <div class="authentication-cover-content">
+                <div class="row justify-content-center">
+                    <div class="col-xl-8 col-lg-11 col-sm-8 col-11">
+                        @Body
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</MudLayout>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+}

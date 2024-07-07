@@ -1,13 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="_themeManager.Theme" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <MudLayout>
     <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
-    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
-    <MudAppBar Elevation="10">
+    <MudThemeManager Open="_isThemeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+    <MudAppBar Elevation="11">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())"/>
         <MudStack Spacing="4" Row="true">
             <MudLink Href="/">
@@ -29,18 +29,23 @@
             </MudBadge>
         </MudTooltip>
         <MudDivider Vertical="true"/>
-        <MudMenu Class="ml-6" StartIcon="@Icons.Material.Filled.Language" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Label="Français (France)" Color="Color.Primary" Variant="Variant.Filled">
-            <MudMenuItem>Français (France)</MudMenuItem>
-            <MudMenuItem>English (United States)</MudMenuItem>
-            <MudMenuItem>Español (España)</MudMenuItem>
-            <MudMenuItem>Sangö (Centrafrique)</MudMenuItem>
+        <MudMenu Class="ml-6" StartIcon="fi fi-fr" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Label="Français (France)" Color="@( _isDarkMode ? Color.Inherit : Color.Primary)"  Variant="Variant.Filled" AnchorOrigin="Origin.BottomRight">
+            <MudMenuItem Icon="fi fi-us">English (United States)</MudMenuItem>
+            <MudMenuItem Icon="fi fi-es">Español (España)</MudMenuItem>
+            <MudMenuItem Icon="fi fi-cf">Sangö (Centrafrique)</MudMenuItem>
         </MudMenu>
+        <MudTooltip Text="Préférence de thème: Light ou Dark ?">
+            <MudToggleIconButton Class="ml-2" @bind-Toggled="@_isDarkMode"
+                                 Icon="@Icons.Material.Outlined.DarkMode"
+                                 ToggledIcon="@Icons.Material.Outlined.LightMode"
+                                 Color="Color.Inherit"/>
+        </MudTooltip>
         <MudTooltip Text="Notifications">
-            <MudBadge Content="35" Color="Color.Error" Overlap="true" Class="mx-4 my-4">
+            <MudBadge Content="35" Color="Color.Error" Overlap="true" Class="mx-2 my-2">
                 <MudIconButton Icon="@Icons.Material.Outlined.NotificationsNone" Color="Color.Inherit"/>
             </MudBadge>
         </MudTooltip>
-        <MudMenu Class="ml-4 mt-1" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopRight"> <!-- ActivationEvent="@MouseEvent.MouseOver"-->
+        <MudMenu Class="ml-4 mt-1" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight"> <!-- ActivationEvent="@MouseEvent.MouseOver"-->
             <ActivatorContent>
                 <MudBadge Color="Color.Warning" Overlap="true" Bordered="true">
                     <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
@@ -49,23 +54,23 @@
                 </MudBadge>
             </ActivatorContent>
             <ChildContent>
-                <MudMenuitem>
+                <MudMenuItem>
                     <MudStack Spacing="2" Row="true" Class="m-3">
                         <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
                             <MudImage Src="img/user.png" Alt="Default user image" ObjectFit="ObjectFit.Fill" ObjectPosition="ObjectPosition.Center"/>
                         </MudAvatar>
                         <MudText Typo="Typo.body1" Align="Align.Justify" Class="mt-2">Caleb BENGUELET</MudText>
                     </MudStack>
-                </MudMenuitem>
+                </MudMenuItem>
                 <MudDivider Class="mb-auto"/>
-                <MudMenuItem Icon="@Icons.Material.Outlined.ManageAccounts" Href="/Account/Manage">Mon compte</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.ManageAccounts" Href="Account/Manage">Mon compte</MudMenuItem>
                 <MudMenuItem Icon="@Icons.Material.Outlined.History" Href="/mes-demandes">Mes demandes</MudMenuItem>
                 <MudDivider Class="mb-auto"/>
-                <MudMenuItem Icon="@Icons.Material.Outlined.Logout" Href="/Account/Logout">Me déconnecter</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Logout" Href="Account/Logout">Me déconnecter</MudMenuItem>
             </ChildContent>
         </MudMenu>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
+    <MudDrawer @bind-Open="@_isDrawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always" > <!--Breakpoint="Breakpoint.Sm" Variant="DrawerVariant.Mini" OpenMiniOnHover="false"> -->
         <MudDrawerHeader>
             <MudStack Spacing="2" Row="true">
                 <MudAvatar Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
@@ -86,28 +91,50 @@
 </MudLayout>
 
 @code {
-    private bool _drawerOpen = true;
-    private ThemeManagerTheme _themeManager = new();
-    private bool _themeManagerOpen;
-
-    private void ToggleDrawer()
+    private bool _isDrawerOpen = true;
+    private bool _isDarkMode;
+    private bool _isThemeManagerOpen;
+    private MudTheme _theme = new()
     {
-        _drawerOpen = !_drawerOpen;
+        Typography = new Typography
+        {
+            Default = new Default
+            {
+                FontFamily = ["Ubuntu", "Helvetica", "Arial", "sans-serif"]
+            }
+        }
+    };
+    private MudThemeProvider? _mudThemeProvider;
+    private ThemeManagerTheme _themeManager = new();
+
+    void ToggleDrawer()
+    {
+        _isDrawerOpen = !_isDrawerOpen;
     }
     
     void OpenThemeManager(bool value)
     {
-        _themeManagerOpen = value;
+        _isThemeManagerOpen = value;
     }
 
     void UpdateTheme(ThemeManagerTheme value)
     {
         _themeManager = value;
+        _theme = _themeManager.Theme;
         StateHasChanged();
     }
 
     protected override void OnInitialized()
     {
         StateHasChanged();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
+            StateHasChanged();
+        }
     }
 }

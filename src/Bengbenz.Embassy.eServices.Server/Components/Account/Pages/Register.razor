@@ -17,45 +17,59 @@
 
 <PageTitle>Register</PageTitle>
 
-<h1>Register</h1>
-
-<div class="row">
-    <div class="col-md-4">
-        <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="confirm-password">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </EditForm>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
+<h5 class="fw-bold pb-5 text-center">Créer un nouveau compte</h5>
+<MudStack Row="true" Class="justify-center pt-3" Spacing="4">
+    <MudButton StartIcon="@Icons.Custom.Brands.Google" Variant="Variant.Outlined" Size="Size.Large">Google</MudButton>
+    <MudButton StartIcon="@Icons.Custom.Brands.Apple" Variant="Variant.Outlined" Size="Size.Large">Apple</MudButton>
+</MudStack>
+<div class="text-center my-3 authentication-barrier">
+    <span>Ou</span>
+</div>
+<div class="row gy-3">
+    <StatusMessage Message="@Message"/>
+    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+        <DataAnnotationsValidator/>
+        <ValidationSummary class="text-danger" role="alert"/>
+        <div class="col-xl-12">
+            <MudTextField @bind-Value="Input.Email"
+                          InputType="InputType.Email"
+                          Variant="Variant.Outlined"
+                          Label="Email"
+                          autocomplete="username"
+                          Required="true"/>
+            <ValidationMessage For="() => Input.Email" class="text-danger"/>
+        </div>
+        <div class="col-xl-12">
+            <MudTextField @bind-Value="Input.Password"
+                          InputType="@_passwordInput"
+                          Variant="Variant.Outlined"
+                          Label="Mot de passe"
+                          autocomplete="new-password"
+                          Required="true"
+                          HelperText="Choisissez un mot de passe complexe."
+                          Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
+            <ValidationMessage For="() => Input.Password" class="text-danger"/>
+        </div>
+        <div class="col-xl-12">
+            <MudTextField @bind-Value="Input.ConfirmPassword"
+                          InputType="@_passwordInput"
+                          Variant="Variant.Outlined"
+                          Label="Confirmez votre mot de passe"
+                          autocomplete="confirm-password"
+                          Required="true"
+                          HelperText="Répétez votre mot de passe."
+                          Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
+            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
+        </div>
+        <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+    </EditForm>
 </div>
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
+    private bool _isShowPassword;
+    InputType _passwordInput = InputType.Password;
+    string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -122,6 +136,21 @@
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
         return (IUserEmailStore<ApplicationUser>)UserStore;
+    }
+    
+    void ShowPassword()
+    {
+        @if (_isShowPassword)
+        {
+            _isShowPassword = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
+        }
+        else {
+            _isShowPassword = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
+        }
     }
 
     private sealed class InputModel

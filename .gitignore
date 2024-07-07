@@ -361,3 +361,5 @@ src/.DS_Store
 .idea
 .vscode
 *.DotSettings
+src/Bengbenz.Embassy.eServices.Server/wwwroot/img/Log in_files/*
+src/Bengbenz.Embassy.eServices.Server/wwwroot/img/Log in.html
