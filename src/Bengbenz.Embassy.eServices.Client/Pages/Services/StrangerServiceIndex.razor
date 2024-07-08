@@ -1,11 +1,13 @@
 ﻿@page "/services/aux-etrangers"
 
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
-
 <PageTitle>CAR e-Embassy - Services aux étrangers</PageTitle>
 
-<MudText Typo="Typo.h4" GutterBottom="true">Services aux étrangers</MudText>
-<MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
+<MudStack Row="true" Spacing="3" Class="pb-5">
+    <MudIcon Icon="@Icons.Material.Outlined.Contacts" Size="Size.Large" />
+    <MudText Typo="Typo.h5" GutterBottom="true">Services aux étrangers</MudText>
+    <MudSpacer/>
+    <MudBreadcrumbs Class="pt-0" Items="_items"></MudBreadcrumbs>
+</MudStack>
 
 @if (forecasts == null)
 {
@@ -53,6 +55,7 @@ else
     private readonly List<BreadcrumbItem> _items =
     [
         new BreadcrumbItem("Accueil", href: "/"),
+        new BreadcrumbItem("Services", href: null, disabled: true),
         new BreadcrumbItem("Services aux étrangers", href: null, disabled: true)
     ];
 

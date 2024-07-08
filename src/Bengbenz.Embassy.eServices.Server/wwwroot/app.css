@@ -19,6 +19,12 @@
     --bs-nav-link-hover-color: var(--mud-palette-primary-darken) !important;
 }
 
+/*
+body{
+    background-color: rgb(242, 246, 249);
+}
+*/
+
 /* Authentification layout */
 .authentication {
     min-height: 100vh;

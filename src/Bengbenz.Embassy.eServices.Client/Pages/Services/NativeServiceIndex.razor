@@ -1,39 +1,54 @@
 ﻿@page "/services/aux-centrafricains"
 
-<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
-
 <PageTitle>CAR e-Embassy - Services aux nationaux</PageTitle>
 
-<MudText Typo="Typo.h4" GutterBottom="true">Services aux nationaux</MudText>
-<MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
+<MudStack Row="true" Spacing="3" Class="pb-5">
+    <MudIcon Icon="@Icons.Material.Outlined.ContactMail" Size="Size.Large"/>
+    <MudText Typo="Typo.h5" GutterBottom="true">Services aux nationaux</MudText>
+    <MudSpacer/>
+    <MudBreadcrumbs Class="pt-0" Items="_items"></MudBreadcrumbs>
+</MudStack>
 
-@if (forecasts == null)
+@if (serviceTypes == null)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 else
 {
-    <MudTable Items="forecasts" Hover="true" SortLabel="Sort By" Elevation="0">
-        <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<WeatherForecast, object>(x=>x.Date)">Date</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.TemperatureC)">Temp. (C)</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.TemperatureF)">Temp. (F)</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.Summary!)">Summary</MudTableSortLabel></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Date">@context.Date</MudTd>
-            <MudTd DataLabel="Temp. (C)">@context.TemperatureC</MudTd>
-            <MudTd DataLabel="Temp. (F)">@context.TemperatureF</MudTd>
-            <MudTd DataLabel="Summary">@context.Summary</MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-        </PagerContent>
-    </MudTable>
+    <MudGrid>
+        @foreach(var item in serviceTypes){
+            <MudItem  xs="6" sm="3">
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Color="Color.Secondary">@item.Title![0]</MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.body1">@item.Title</MudText>
+                            <MudText Typo="Typo.body2">@item.Summary</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardMedia Image="img/carte_rca_simple.png" Height="250" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.body2">@item.Description</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ReadMore" Color="Color.Default" />
+                        <MudSpacer />
+                        <MudText Typo="Typo.h5">@($"{item.Price:##,##}")</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.EuroSymbol" Color="Color.Default" />
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private ServiceType[]? serviceTypes;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,26 +56,38 @@ else
         await Task.Delay(500);
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var titles = new[] { "Certificat de coutume et Célibat", "Attestation pour le PACS", "Certificat de célibat", "Attestation de concordance", "Certificat de vie", "Livret de famille" };
         var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        serviceTypes = Enumerable.Range(1, 4).Select(index => new ServiceType
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
+            Title = titles[Random.Shared.Next(titles.Length)],
+            Summary = summaries[Random.Shared.Next(summaries.Length)],
+            Price = Random.Shared.NextDouble()*100
         }).ToArray();
     }
     
     private readonly List<BreadcrumbItem> _items =
     [
         new BreadcrumbItem("Accueil", href: "/"),
+        new BreadcrumbItem("Services", href: null, disabled: true),
         new BreadcrumbItem("Services aux nationaux", href: null, disabled: true)
     ];
 
-    private class WeatherForecast
+    private class ServiceType
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
+        public long Id { get; set; }
+        public string? Title { get; set; }
         public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public string? Description { get; set; }
+        public string? Prerequisties { get; set; }
+        public double Price { get; set; }
+        public int VAT { get; set; }
+        public DateOnly CreatedAt { get; set; }
+        public DateOnly LastModifiedAt { get; set; }
+    }
+
+    private class Category
+    {
+        
     }
 }
