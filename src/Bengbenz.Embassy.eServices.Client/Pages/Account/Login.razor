@@ -21,7 +21,6 @@
     <span>Ou</span>
 </div>
 <div class="row gy-3">
-    <StatusMessage Message="@_errorMessage"/>
     <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
         <DataAnnotationsValidator/>
         <ValidationSummary class="text-danger" role="alert"/>
@@ -69,7 +68,6 @@
 </div>-->
 
 @code {
-    private string? _errorMessage;
     private bool _isShowPassword;
     InputType _passwordInput = InputType.Password;
     string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
@@ -90,6 +88,7 @@
         //     // Clear the existing external cookie to ensure a clean login process
         //     await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         // }
+        await Task.CompletedTask;
     }
 
     public async Task LoginUser()
@@ -117,6 +116,7 @@
         // {
         //     _errorMessage = "Error: Invalid login attempt.";
         // }
+        await Task.CompletedTask;
     }
     
     void ShowPassword()
