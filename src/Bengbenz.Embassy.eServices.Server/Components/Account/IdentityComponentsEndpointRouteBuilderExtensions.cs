@@ -1,6 +1,6 @@
 using Bengbenz.Embassy.eServices.Server.Components.Account.Pages;
 using Bengbenz.Embassy.eServices.Server.Components.Account.Pages.Manage;
-using Bengbenz.Embassy.eServices.Server.Data;
+using Bengbenz.Embassy.eServices.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

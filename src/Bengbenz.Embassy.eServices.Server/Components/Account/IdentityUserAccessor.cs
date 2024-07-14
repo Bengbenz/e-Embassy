@@ -1,4 +1,4 @@
-using Bengbenz.Embassy.eServices.Server.Data;
+using Bengbenz.Embassy.eServices.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace Bengbenz.Embassy.eServices.Server.Components.Account

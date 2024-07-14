@@ -11,8 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server"/>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
@@ -21,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<ProjectReference Include="..\Bengbenz.Embassy.eServices.Infrastructure\Bengbenz.Embassy.eServices.Infrastructure.csproj" />-->
+    <ProjectReference Include="..\Bengbenz.Embassy.eServices.Infrastructure\Bengbenz.Embassy.eServices.Infrastructure.csproj" />
     <ProjectReference Include="..\Bengbenz.Embassy.eServices.Client\Bengbenz.Embassy.eServices.Client.csproj" />
+    <ProjectReference Include="..\Bengbenz.Embassy.eServices.Core\Bengbenz.Embassy.eServices.Core.csproj" />
   </ItemGroup>
 </Project>
