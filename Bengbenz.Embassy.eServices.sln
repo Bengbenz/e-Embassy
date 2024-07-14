@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bengbenz.Embassy.eServices.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bengbenz.Embassy.eServices.Client", "src\Bengbenz.Embassy.eServices.Client\Bengbenz.Embassy.eServices.Client.csproj", "{C05CA89E-08CE-45B0-8BED-A5DE9D2B8FE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BengBenz.Embassy.eServices.Infrastructure", "src\BengBenz.Embassy.eServices.Infrastructure\BengBenz.Embassy.eServices.Infrastructure.csproj", "{0D352AD4-F5AE-48A9-B1F7-F2A8916CAB83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bengbenz.Embassy.eServices.Infrastructure", "src\Bengbenz.Embassy.eServices.Infrastructure\Bengbenz.Embassy.eServices.Infrastructure.csproj", "{0D352AD4-F5AE-48A9-B1F7-F2A8916CAB83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bengbenz.Embassy.eServices.Core", "src\Bengbenz.Embassy.eServices.Core\Bengbenz.Embassy.eServices.Core.csproj", "{A63A7950-4F5D-450F-9CA8-263953A19259}"
 EndProject
@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 		.editorconfig = .editorconfig
 		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

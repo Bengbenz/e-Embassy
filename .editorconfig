@@ -1,7 +1,8 @@
 ﻿# This file is the top-most EditorConfig file
 root = true
 
-[*.cs]
+[*.{cs, razor}]
+file_header_template = MIT License.\n\nCopyright (c) 2024 Caleb BENGUELET, @Bengbenz\nSome more info in {LICENSE} file.
 dotnet_diagnostic.CA2007.severity = none 
 dotnet_diagnostic.CA1303.severity = none 
 
