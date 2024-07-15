@@ -16,11 +16,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" PrivateAssets="All" />
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Bengbenz.Embassy.eServices.Infrastructure\Bengbenz.Embassy.eServices.Infrastructure.csproj" />
     <ProjectReference Include="..\Bengbenz.Embassy.eServices.Client\Bengbenz.Embassy.eServices.Client.csproj" />
-    <ProjectReference Include="..\Bengbenz.Embassy.eServices.Core\Bengbenz.Embassy.eServices.Core.csproj" />
   </ItemGroup>
 </Project>

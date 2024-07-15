@@ -1,3 +1,4 @@
+using Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -15,34 +16,16 @@ public static class EmbassyDbContextSeed
         {
             if (embassyContext.Database.IsNpgsql())
             {
-                // await embassyContext.Database.EnsureCreatedAsync();
                 await embassyContext.Database.MigrateAsync();
             }
 
-            // if (!await embassyContext.CatalogBrands.AnyAsync())
-            // {
-            //     await embassyContext.CatalogBrands.AddRangeAsync(
-            //         GetPreconfiguredCatalogBrands());
-            //
-            //     await embassyContext.SaveChangesAsync();
-            // }
-            //
-            // if (!await embassyContext.CatalogTypes.AnyAsync())
-            // {
-            //     await embassyContext.CatalogTypes.AddRangeAsync(
-            //         GetPreconfiguredCatalogTypes());
-            //
-            //     await embassyContext.SaveChangesAsync();
-            // }
-            //
-            // if (!await embassyContext.CatalogItems.AnyAsync())
-            // {
-            //     await embassyContext.CatalogItems.AddRangeAsync(
-            //         GetPreconfiguredItems());
-            //
-            //     await embassyContext.SaveChangesAsync();
-            // }
-            await Task.CompletedTask;
+            if (!await embassyContext.Categories.AnyAsync())
+            {
+                await embassyContext.Categories.AddRangeAsync(
+                    GetPreconfiguredCategories());
+            
+                await embassyContext.SaveChangesAsync();
+            }
         }
         catch (Exception ex)
         {
@@ -54,5 +37,21 @@ public static class EmbassyDbContextSeed
             throw;
         }
         logger.LogInformation("Seed database associated with context {DbContextName}", nameof(EmbassyDbContext));
+    }
+
+    static IReadOnlyCollection<Category> GetPreconfiguredCategories()
+    {
+        var subCategories = new List<Category>
+        {
+            new("Certificat"),
+            new("Attestation"),
+            new("Légalisation")
+        };
+        
+        return new List<Category>
+        {
+            new( "Services aux nationaux",  subCategories),
+            new("Services aux étrangers")
+        };
     }
 }
