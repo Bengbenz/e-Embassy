@@ -1,6 +1,8 @@
 ﻿using Ardalis.SharedKernel;
 using Bengbenz.Embassy.eServices.Infrastructure.Data;
+using Bengbenz.Embassy.eServices.Infrastructure.Data.Queries;
 using Bengbenz.Embassy.eServices.Infrastructure.Identity;
+using Bengbenz.Embassy.eServices.UseCases.Categories.List;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -69,7 +71,7 @@ public static class InfrastructureServiceExtensions
     private static void RegisterProductionOnlyDependencies(IServiceCollection services)
     {
         // services.AddScoped<IEmailSender<ApplicationUser>, SmtpEmailSender>();
-        // services.AddScoped<IListContributorsQueryService, ListContributorsQueryService>();
+        services.AddScoped<IListCategoriesQueryService, ListCategoriesQueryService>();
         // services.AddScoped<IListIncompleteItemsQueryService, ListIncompleteItemsQueryService>();
         // services.AddScoped<IListProjectsShallowQueryService, ListProjectsShallowQueryService>();
     }

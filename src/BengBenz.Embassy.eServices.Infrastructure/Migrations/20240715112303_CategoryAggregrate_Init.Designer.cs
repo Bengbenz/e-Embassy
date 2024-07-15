@@ -3,6 +3,7 @@ using System;
 using Bengbenz.Embassy.eServices.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bengbenz.Embassy.eServices.Infrastructure.Migrations
 {
     [DbContext(typeof(EmbassyDbContext))]
-    partial class EmbassyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715112303_CategoryAggregrate_Init")]
+    partial class CategoryAggregrate_Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
