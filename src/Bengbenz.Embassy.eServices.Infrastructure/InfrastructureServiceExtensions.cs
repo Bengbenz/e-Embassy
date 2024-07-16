@@ -38,14 +38,15 @@ public static class InfrastructureServiceExtensions
     {
         RegisterEntityFrameworkServices(services, configuration);
         
-        if (isDevelopment)
-        {
-            RegisterDevelopmentOnlyDependencies(services);
-        }
-        else
-        {
-            RegisterProductionOnlyDependencies(services);
-        }
+        services.AddScoped<IListCategoriesQueryService, ListCategoriesQueryService>();
+        // if (isDevelopment)
+        // {
+        //     RegisterDevelopmentOnlyDependencies(services);
+        // }
+        // else
+        // {
+        //     RegisterProductionOnlyDependencies(services);
+        // }
 
         logger.LogInformation("{Project} services registered", "Infrastructure");
         
