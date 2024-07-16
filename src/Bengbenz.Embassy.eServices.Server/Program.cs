@@ -1,4 +1,5 @@
 using System.Reflection;
+using Ardalis.ListStartupServices;
 using Ardalis.SharedKernel;
 using Bengbenz.Embassy.eServices.Client;
 using Bengbenz.Embassy.eServices.Core;
@@ -67,78 +68,90 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Title = "Bengbenz.Embassy.eServices API",
         Description = "A Web API for managing e-public services at CAR Embassy",
-        TermsOfService = new Uri("https://example.com/terms"),
+        //TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
         {
             Name = "Caleb BENGUELET",
-            Url = new Uri("bengbenz@gmail.com")
+            //Url = new Uri("bengbenz@gmail.com")
         },
         License = new OpenApiLicense
         {
             Name = "MIT License",
-            Url = new Uri("https://github.com/Bengbenz/e-Embassy?tab=MIT-1-ov-file")
+            //Url = new Uri("https://github.com/Bengbenz/e-Embassy?tab=MIT-1-ov-file")
         }
     });
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}-docs.xml";
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 // Add services from core project.
+// Add services from use cases project.
 // Add services from infrastructure project.
-    builder.Services.AddCoreServices(microsoftLogger)
-        .AddInfrastructureServices(
-            microsoftLogger,
-            builder.Configuration,
-            builder.Environment.IsDevelopment());
-    ConfigureMediatR();
+builder.Services.AddCoreServices(microsoftLogger)
+    .AddUseCasesServices(microsoftLogger)
+    .AddInfrastructureServices(
+        microsoftLogger,
+        builder.Configuration,
+        builder.Environment.IsDevelopment());
 
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+ConfigureMediatR();
+// add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
+builder.Services.Configure<ServiceConfig>(config =>
+{
+    config.Services = new List<ServiceDescriptor>(builder.Services);
 
-    builder.Services
-        .AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddEntityFrameworkStores<AppIdentityDbContext>()
-        .AddSignInManager()
-        .AddDefaultTokenProviders();
+    // optional - default path to view services is /listallservices - recommended to choose your own path
+    config.Path = "/listservices";
+});
 
-    var app = builder.Build();
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<AppIdentityDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+var app = builder.Build();
 
 // *****
 // Configure the HTTP request pipeline (Middleware).
 // *****
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-        app.UseWebAssemblyDebugging();
-        app.UseMigrationsEndPoint();
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Error", createScopeForErrors: true);
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        app.UseHsts();
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseWebAssemblyDebugging();
+    app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
-    app.UseAntiforgery();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseAntiforgery();
 
 // Add Blazor web assembly middleware
-    app.MapRazorComponents<App>()
-        .AddInteractiveWebAssemblyRenderMode()
-        .AddAdditionalAssemblies(typeof(UserInfo).Assembly);
+app.MapRazorComponents<App>()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(UserInfo).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
-    app.MapAdditionalIdentityEndpoints();
+app.MapAdditionalIdentityEndpoints();
 
-    app.MapControllers();
+app.MapControllers();
 
 // Seed Database
-    await SeedDatabase(app);
+await SeedDatabase(app);
 
-    app.Run();
-    return;
+app.Run();
+return;
 
 
 void ConfigureMediatR()
