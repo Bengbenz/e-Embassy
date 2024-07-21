@@ -1,0 +1,63 @@
+@using Bengbenz.Embassy.eServices.UseCases.Categories
+
+<MudCard Elevation="3" >
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Sous-catégories de: @SelectedItem.Name</MudText>
+            <MudDivider />
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudTable Items="SelectedItem.SubCategories" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
+                  Loading="_loadingDetails" Filter="new Func<CategoryDto, bool>(FilterDetailsFunc)" >
+            <ToolBarContent>
+                <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Outlined.Add" Size="Size.Small" Color="Color.Primary"></MudFab></MudTooltip>
+                <MudSpacer />
+                <MudTextField @bind-Value="_searchDetailsText" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<CategoryDto, object>(x => x.Name!)">Name</MudTableSortLabel></MudTh>
+                <MudTh Class="pr-10" Style="text-align:right">Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nom">@context.Name</MudTd>
+                <MudTd DataLabel="Actions" Style="text-align:right">
+                    <MudTooltip Text="Details"><MudFab StartIcon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" DropShadow="false"/></MudTooltip>
+                    <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false"/></MudTooltip>
+                    <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false"/></MudTooltip>
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>No matching records found</MudText>
+            </NoRecordsContent>
+            <LoadingContent>
+                <MudText>Loading...</MudText>
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+            </LoadingContent>
+            <PagerContent>
+                @if(SelectedItem.SubCategories.ToList().Count > 10)
+                {
+                <MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
+                }
+            </PagerContent>
+        </MudTable>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public CategoryDto SelectedItem { get; set; } = new();
+    
+    private bool _loadingDetails = true;
+    private string _searchDetailsText = "";
+    
+    private bool FilterDetailsFunc(CategoryDto element) => LookingFor(element, _searchDetailsText);
+    
+    private bool LookingFor(CategoryDto element, string searchString = "")
+     => string.IsNullOrWhiteSpace(searchString) || element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    
+    protected override void OnInitialized()
+    {
+        _loadingDetails = false;
+    }
+}

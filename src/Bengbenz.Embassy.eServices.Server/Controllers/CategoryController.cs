@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Caleb BENGUELET, @Bengbenz
 // See more info in [LICENSE] file.
 
+using Ardalis.Result;
 using Bengbenz.Embassy.eServices.UseCases.Categories;
 using Bengbenz.Embassy.eServices.UseCases.Categories.List;
 using MediatR;
@@ -12,15 +13,21 @@ namespace Bengbenz.Embassy.eServices.Server.Controllers;
 public sealed class CategoryController(ILogger<CategoryController> logger, IMediator mediator)
     : BaseApiController(logger, mediator)
 {
-    [HttpGet]
-    public async Task<ActionResult<List<CategoryDto>>> List(CancellationToken cancellationToken)
+    [HttpGet("categories")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<CategoryDto>>> ListAsync(CancellationToken cancellationToken)
     {
         var query = new ListCategoriesQuery();
-        var result = await Mediator.Send(query, cancellationToken);
-        return Ok(result);
+        Result<IEnumerable<CategoryDto>> result = await Mediator.Send(query, cancellationToken);
+        if (result.IsSuccess)
+        {
+          return Ok(result.Value);
+        }
+
+        return NotFound();
     }
     
-    // [HttpGet("{id}")]
+    // [HttpGet("categories/{id}")]
     // public async Task<ActionResult<CategoryDto>> GetById(int id, CancellationToken cancellationToken)
     // {
     //     var query = new GetCategoryQuery(id);

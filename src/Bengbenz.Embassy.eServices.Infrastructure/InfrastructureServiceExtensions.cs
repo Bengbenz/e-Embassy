@@ -1,8 +1,13 @@
-﻿using Ardalis.SharedKernel;
+﻿using System.Reflection;
+using Ardalis.SharedKernel;
+using Bengbenz.Embassy.eServices.Core;
+using Bengbenz.Embassy.eServices.Infrastructure.Behaviors;
 using Bengbenz.Embassy.eServices.Infrastructure.Data;
 using Bengbenz.Embassy.eServices.Infrastructure.Data.Queries;
 using Bengbenz.Embassy.eServices.Infrastructure.Identity;
+using Bengbenz.Embassy.eServices.UseCases;
 using Bengbenz.Embassy.eServices.UseCases.Categories.List;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +56,35 @@ public static class InfrastructureServiceExtensions
         logger.LogInformation("{Project} services registered", "Infrastructure");
         
         return services;
+    }
+    
+    /// <summary>
+    /// Registers MediatR services, pipeline behaviors, and domain event dispatchers into the application's service collection.
+    /// This setup is crucial for enabling MediatR to automatically discover and use request handlers, notification handlers,
+    /// and pipeline behaviors defined across the application.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to which MediatR services are added.</param>
+    /// <returns>The IServiceCollection with MediatR services registered, allowing for chaining of other service registration calls.</returns>
+    /// <remarks>
+    /// This method performs the following actions:
+    /// - Identifies and registers assemblies containing MediatR components.
+    /// - Adds MediatR services to the service collection by scanning these assemblies.
+    /// - Registers a generic logging behavior that applies to all MediatR requests.
+    /// - Registers a domain event dispatcher to facilitate domain event handling using MediatR.
+    /// </remarks>
+    public static IServiceCollection AddMediatRServices(this IServiceCollection services)
+    {
+      var mediatRAssemblies = new[]
+      {
+        Assembly.GetAssembly(typeof(CoreServiceExtensions)), // Core
+        Assembly.GetAssembly(typeof(UseCasesExtensions)), // UseCases
+        Assembly.GetAssembly(typeof(InfrastructureServiceExtensions)) // Infrastructure
+      };
+
+      services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
+      services.AddScoped(typeof(IPipelineBehavior<,>), typeof(CustomLoggingBehavior<,>));
+      services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
+      return services;
     }
     
     /// <summary>
