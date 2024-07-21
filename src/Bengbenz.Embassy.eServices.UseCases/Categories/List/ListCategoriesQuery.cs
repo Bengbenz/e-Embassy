@@ -7,4 +7,4 @@ using Ardalis.SharedKernel;
 
 namespace Bengbenz.Embassy.eServices.UseCases.Categories.List;
 
-public record ListCategoriesQuery(int? Skip = null, int? Take = null) : IQuery<Result<IEnumerable<CategoryDto>>>;
+public record ListCategoriesQuery(int Skip = 0, int Take = 0) : IQuery<Result<IEnumerable<CategoryDto>>>;

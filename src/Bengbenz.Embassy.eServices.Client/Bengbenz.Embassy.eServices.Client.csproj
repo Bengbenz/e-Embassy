@@ -11,8 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration"/>
     <PackageReference Include="MudBlazor"/>
   	<PackageReference Include="MudBlazor.ThemeManager"/>
+    <PackageReference Include="RestSharp"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,5 +24,4 @@
   <ItemGroup>
     <Folder Include="Components\" />
   </ItemGroup>
-  
 </Project>

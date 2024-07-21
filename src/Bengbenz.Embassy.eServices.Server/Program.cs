@@ -1,7 +1,7 @@
 using System.Reflection;
 using Ardalis.ListStartupServices;
-using Ardalis.SharedKernel;
 using Bengbenz.Embassy.eServices.Client;
+using Bengbenz.Embassy.eServices.Client.Shared;
 using Bengbenz.Embassy.eServices.Core;
 using Bengbenz.Embassy.eServices.Infrastructure;
 using Bengbenz.Embassy.eServices.Infrastructure.Data;
@@ -9,7 +9,6 @@ using Bengbenz.Embassy.eServices.Infrastructure.Identity;
 using Bengbenz.Embassy.eServices.Server.Components;
 using Bengbenz.Embassy.eServices.Server.Components.Account;
 using Bengbenz.Embassy.eServices.UseCases;
-using MediatR;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
@@ -60,6 +59,18 @@ if (builder.Environment.IsDevelopment())
 
 // Add web api controllers services.
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+builder.Configuration.AddEnvironmentVariables();
+
+// add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
+builder.Services.Configure<ServiceConfig>(config =>
+{
+  config.Services = new List<ServiceDescriptor>(builder.Services);
+
+  // optional - default path to view services is /listallservices - recommended to choose your own path
+  config.Path = "/servicesinfo";
+});
+
 // Add swagger services.
 builder.Services.AddSwaggerGen(options =>
 {
@@ -84,26 +95,29 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+// Blazor wasm client configuration
+var baseUrlConfig = builder.Configuration.GetSection(BaseUrlConfiguration.CONFIG_NAME)
+  .Get<BaseUrlConfiguration>();
+    
+// Blazor wasm client required Services for Prerendering
+builder.Services.AddScoped<HttpClient>(s => new HttpClient
+{
+  BaseAddress = new Uri(baseUrlConfig!.WebBase ?? string.Empty)
+});
+
 // Add services from core project.
 // Add services from use cases project.
 // Add services from infrastructure project.
 builder.Services.AddCoreServices(microsoftLogger)
-    .AddUseCasesServices(microsoftLogger)
-    .AddInfrastructureServices(
-        microsoftLogger,
-        builder.Configuration,
-        builder.Environment.IsDevelopment());
-
-ConfigureMediatR();
-// add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
-builder.Services.Configure<ServiceConfig>(config =>
-{
-    config.Services = new List<ServiceDescriptor>(builder.Services);
-
-    // optional - default path to view services is /listallservices - recommended to choose your own path
-    config.Path = "/listservices";
-});
-
+  .AddUseCasesServices(microsoftLogger)
+  .AddInfrastructureServices(
+    microsoftLogger,
+    builder.Configuration,
+    builder.Environment.IsDevelopment())
+  .AddClientServices();
+ 
+// Add MediatR services.
+builder.Services.AddMediatRServices();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -152,21 +166,6 @@ await SeedDatabase(app);
 
 app.Run();
 return;
-
-
-void ConfigureMediatR()
-{
-    var mediatRAssemblies = new[]
-    {
-        Assembly.GetAssembly(typeof(CoreServiceExtensions)), // Core
-        Assembly.GetAssembly(typeof(UseCasesExtensions)), // UseCases
-        Assembly.GetAssembly(typeof(InfrastructureServiceExtensions)) // Infrastructure
-    };
-
-    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
-    builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-    builder.Services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
-}
 
 async Task SeedDatabase(WebApplication webApp)
 {

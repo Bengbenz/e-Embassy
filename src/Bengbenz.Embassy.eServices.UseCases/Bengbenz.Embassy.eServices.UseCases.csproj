@@ -3,6 +3,7 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
         <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     </ItemGroup>

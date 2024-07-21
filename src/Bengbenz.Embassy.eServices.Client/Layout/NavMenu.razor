@@ -6,8 +6,6 @@
 			<MudNavLink Href="Services/aux-etrangers" Icon="@Icons.Material.Outlined.Contacts">Aux étrangers</MudNavLink>
 			<MudNavLink Href="Services/aux-centrafricains" Icon="@Icons.Material.Outlined.ContactMail">Aux Centrafricains</MudNavLink>
 		</MudNavGroup>
-		<MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
-		<MudNavLink Href="auth" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Auth Required</MudNavLink>
 	</MudNavMenu>
 </MudPaper>
 <MudSpacer/>
@@ -17,10 +15,11 @@
 			<Authorized>
 				<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@context.User.Identity?.Name</MudNavLink>
 			</Authorized>
-			<NotAuthorized>
-				<MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Register</MudNavLink>
-				<MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
-			</NotAuthorized>
+            <NotAuthorized>
+                <MudNavLink Href="Admin/Categories" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category">Categories</MudNavLink>
+                <MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Register</MudNavLink>
+                <MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
+            </NotAuthorized>
 		</AuthorizeView>
 	</MudNavMenu>
 </MudPaper>

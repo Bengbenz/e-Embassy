@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bengbenz.Embassy.eServices.Server.Controllers;
 
-[Route("api/[controller]/[action]")]
+[Route("api")]
 [ApiController]
 public abstract class BaseApiController(ILogger logger, IMediator mediator) : ControllerBase
 {

@@ -4,17 +4,22 @@
 
 using Ardalis.SharedKernel;
 using Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
-using Bengbenz.Embassy.eServices.UseCases.Categories;
+using Bengbenz.Embassy.eServices.Core.CategoryAggregrate.Specifications;
 using Bengbenz.Embassy.eServices.UseCases.Categories.List;
 
 namespace Bengbenz.Embassy.eServices.Infrastructure.Data.Queries;
 
 public sealed class ListCategoriesQueryService(IReadRepository<Category> repository) : IListCategoriesQueryService
 {
-    public async Task<IEnumerable<CategoryDto>> ListAsync()
+    public async Task<IEnumerable<Category>> ListAsync()
     {
         var categories = await repository.ListAsync();
-        return categories.Select(c => new CategoryDto(c.Id, c.Name))
-            .ToList();
+        return categories.ToList();
+    }
+    
+    public async Task<IEnumerable<Category>> GetCategoriesWithSubCategoriesAsync()
+    {
+      var spec = new CategoryListWithSubCategoriesSpec(); 
+      return await repository.ListAsync(spec);
     }
 }

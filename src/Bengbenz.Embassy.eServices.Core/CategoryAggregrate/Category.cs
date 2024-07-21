@@ -10,8 +10,10 @@ namespace Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
 public class Category(string name) : EntityBase, IAggregateRoot
 {
     public string Name { get; private set; } = Guard.Against.NullOrEmpty(name, nameof(name));
+    public int? ParentCategoryId { get; private set; }
     
     private readonly List<Category> _subCategories = [];
+    
     public IEnumerable<Category> SubCategories => _subCategories.AsReadOnly();
     
     public Category(string name, IEnumerable<Category> subCategories) : this(name)

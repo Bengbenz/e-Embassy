@@ -1,0 +1,75 @@
+@using Bengbenz.Embassy.eServices.Client.Models.Categories
+@using Bengbenz.Embassy.eServices.Client.Services
+@using Bengbenz.Embassy.eServices.UseCases.Categories
+@inject CategoryItemService CategoryItemService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@TitleIcon" Class="mr-3" />
+            @TitleContentText
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@Item" @ref="_form">
+            <MudCard>
+                @if (Item.ParentCategoryName is not null)
+                {
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.subtitle2">Category Parent:</MudText>
+                        <MudText Typo="Typo.h6">@Item.ParentCategoryName</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                }
+                <MudCardContent>
+                    <MudTextField @bind-Value="Item.Name"
+                                  For="@(() => Item.Name)"
+                                  InputType="InputType.Text"
+                                  Variant="Variant.Outlined"
+                                  Label="Name"/>
+                </MudCardContent>
+            </MudCard>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="@SubmitColor" OnClick="Submit" Class="px-10">@SubmitButtonText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+    
+    [Parameter]
+    public string? TitleIcon { get; set; }
+    [Parameter]
+    public string? TitleContentText { get; set; }
+    [Parameter]
+    public string? SubmitButtonText { get; set; }
+    [Parameter]
+    public Color SubmitColor { get; set; }
+
+    private MudForm? _form;
+    
+    [Parameter]
+    public CategoryDto Item { get; set; } = new();
+
+    private async Task Submit()
+    {
+        await _form!.Validate();
+        if (_form.IsValid)
+        {
+            var result = await CategoryItemService.EditAsync(Item);
+            if (result is not null)
+            {
+                MudDialog!.Close(DialogResult.Ok(true));
+                Snackbar.Add($"Category {result.Name} ajouté !", Severity.Success);
+            }
+        }
+    }
+
+    private void Cancel() => MudDialog!.Cancel();
+}
