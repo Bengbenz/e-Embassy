@@ -1,53 +1,81 @@
+@using Bengbenz.Embassy.eServices.Client.Services
 @using Bengbenz.Embassy.eServices.UseCases.Categories
+@using Bengbenz.Embassy.eServices.UseCases.Categories.Create
+@inject CategoryItemService CategoryItemService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
-<MudCard Elevation="3" >
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Sous-catégories de: @SelectedItem.Name</MudText>
-            <MudDivider />
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudTable Items="SelectedItem.SubCategories" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
-                  Loading="_loadingDetails" Filter="new Func<CategoryDto, bool>(FilterDetailsFunc)" >
-            <ToolBarContent>
-                <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Outlined.Add" Size="Size.Small" Color="Color.Primary"></MudFab></MudTooltip>
-                <MudSpacer />
-                <MudTextField @bind-Value="_searchDetailsText" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh><MudTableSortLabel SortBy="new Func<CategoryDto, object>(x => x.Name!)">Name</MudTableSortLabel></MudTh>
-                <MudTh Class="pr-10" Style="text-align:right">Actions</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Nom">@context.Name</MudTd>
-                <MudTd DataLabel="Actions" Style="text-align:right">
-                    <MudTooltip Text="Details"><MudFab StartIcon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" DropShadow="false"/></MudTooltip>
-                    <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false"/></MudTooltip>
-                    <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false"/></MudTooltip>
-                </MudTd>
-            </RowTemplate>
-            <NoRecordsContent>
-                <MudText>No matching records found</MudText>
-            </NoRecordsContent>
-            <LoadingContent>
-                <MudText>Loading...</MudText>
-                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-            </LoadingContent>
-            <PagerContent>
-                @if(SelectedItem.SubCategories.ToList().Count > 10)
-                {
-                <MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
-                }
-            </PagerContent>
-        </MudTable>
-    </MudCardContent>
-</MudCard>
+@if (_selectedItem is null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" Class="justify-content-center align-content-center" />
+}
+else
+{
+    <MudCard Elevation="3" >
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudStack Row="true">
+                    <MudText Typo="Typo.h5">@_selectedItem.Name</MudText>
+                    <MudSpacer></MudSpacer>
+                    <MudTextField @bind-Value="_searchDetailsText" Placeholder="Rechercher"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium" Class="mt-0">
+                    </MudTextField>
+                </MudStack>
+                <MudDivider/>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTable Items="_selectedItem.SubCategories" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
+                      Loading="_loadingDetails" Filter="new Func<CategoryDto, bool>(FilterDetailsFunc)" >
+                <ToolBarContent>
+                    <MudIcon Icon="@Icons.Material.Filled.FolderOpen" ></MudIcon>
+                    <MudText Typo="Typo.h6" Class="ml-2">Sous-catégories</MudText>
+                    <MudSpacer/>
+                    <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Outlined.Add" Size="Size.Small" Color="Color.Primary" OnClick="OpenCreateDialogAsync"></MudFab></MudTooltip>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<CategoryDto, object>(x => x.Name!)">Name</MudTableSortLabel></MudTh>
+                    <MudTh Class="pr-10" Style="text-align:right">Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Nom">@context.Name</MudTd>
+                    <MudTd DataLabel="Actions" Style="text-align:right">
+                        <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false" OnClick="() => OpenEditDialogAsync(context)" /></MudTooltip>
+                        <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false" OnClick="() => OpenDeleteDialogAsync(context)"/></MudTooltip>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>No matching records found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Chargement...</MudText>
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                </LoadingContent>
+                <PagerContent>
+                    @if(_selectedItem.SubCategories.ToList().Count > 10)
+                    {
+                    <MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
+                    }
+                </PagerContent>
+            </MudTable>
+        </MudCardContent>
+        <MudCardActions>
+            <MudSpacer />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => OpenEditDialogAsync(_selectedItem)">Modifier</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
 
 @code {
     [Parameter]
-    public CategoryDto SelectedItem { get; set; } = new();
+    public EventCallback<CategoryDto> OnEditClick { get; set; }
+    [Parameter]
+    public EventCallback<CategoryDto> OnDeleteClick { get; set; }
+    [Parameter]
+    public int SelectedItemId { get; set; }
     
+    private CategoryDto? _selectedItem { get; set; }
     private bool _loadingDetails = true;
     private string _searchDetailsText = "";
     
@@ -56,8 +84,40 @@
     private bool LookingFor(CategoryDto element, string searchString = "")
      => string.IsNullOrWhiteSpace(searchString) || element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
     
-    protected override void OnInitialized()
-    {
+    protected override async Task OnParametersSetAsync()
+    { 
+        _selectedItem = await CategoryItemService.GetByIdAsync(SelectedItemId);
         _loadingDetails = false;
+        await base.OnParametersSetAsync();
+    }
+    
+    private async Task OpenEditDialogAsync(CategoryDto category)
+    {
+        await OnEditClick.InvokeAsync(category);
+    }
+    
+    private async Task OpenDeleteDialogAsync(CategoryDto category)
+    {
+        await OnDeleteClick.InvokeAsync(category);
+    }
+    
+    private async Task OpenCreateDialogAsync()
+    {
+        var dialogParameters = new DialogParameters<Create>
+        {
+            { x => x.TitleIcon, Icons.Material.Filled.AddCircle },
+            { x => x.TitleContentText, "Ajouter une sous-categorie" },
+            { x => x.SubmitButtonText, "Valider" },
+            { x => x.SubmitColor, Color.Primary },
+            { x => x.ItemRequest, new CreateCategoryRequest{ ParentCategoryId = _selectedItem!.Id, ParentCategoryName = _selectedItem.Name } },
+            { x => x.OnSaveClick, new EventCallback(null, ReloadCategoryItems) }
+        };
+        await DialogService.ShowAsync<Create>(string.Empty, dialogParameters);
+    }
+    
+    private async Task ReloadCategoryItems()
+    {
+        _selectedItem = await CategoryItemService.GetByIdAsync(SelectedItemId);
+        StateHasChanged();
     }
 }

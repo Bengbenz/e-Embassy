@@ -9,17 +9,22 @@ using Bengbenz.Embassy.eServices.UseCases.Categories.List;
 
 namespace Bengbenz.Embassy.eServices.Infrastructure.Data.Queries;
 
+/// <summary>
+/// Provides implementation for querying categories and their subcategories from a repository.
+/// </summary>
+/// <param name="repository">The repository to access category data.</param>
 public sealed class ListCategoriesQueryService(IReadRepository<Category> repository) : IListCategoriesQueryService
 {
+    /// <inheritdoc />
     public async Task<IEnumerable<Category>> ListAsync()
     {
-        var categories = await repository.ListAsync();
-        return categories.ToList();
+      return await repository.ListAsync();
     }
     
-    public async Task<IEnumerable<Category>> GetCategoriesWithSubCategoriesAsync()
+    /// <inheritdoc />
+    public async Task<IEnumerable<Category>> GetRootCategoriesWithSubCategoriesAsync()
     {
-      var spec = new CategoryListWithSubCategoriesSpec(); 
+      var spec = new RootCategoryListWithSubCategoriesSpec(); 
       return await repository.ListAsync(spec);
     }
 }

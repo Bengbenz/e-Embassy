@@ -1,6 +1,4 @@
-﻿using Ardalis.SharedKernel;
-using Bengbenz.Embassy.eServices.UseCases.Categories.List;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Bengbenz.Embassy.eServices.UseCases;
@@ -24,6 +22,8 @@ public static class UseCasesExtensions
     ILogger logger)
     {
         // services.AddScoped(typeof(IQueryHandler<,>), typeof(ListCategoriesHandler));
+        
+        //services.AddValidatorsFromAssemblyContaining<UseCasesExtensions>();
         logger.LogInformation("{Project} services registered", "UseCases");
         return services;
     }

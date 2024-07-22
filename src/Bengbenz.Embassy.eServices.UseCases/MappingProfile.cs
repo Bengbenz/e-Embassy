@@ -13,6 +13,5 @@ public class MappingProfile : Profile
   public MappingProfile()
   {
     CreateMap<Category, CategoryDto>();
-    // .ForMember(dest => dest.SubCategories, opt => opt.MapFrom(src => src.SubCategories));
   }
 }

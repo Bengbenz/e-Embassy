@@ -8,6 +8,7 @@ using Bengbenz.Embassy.eServices.Infrastructure.Data;
 using Bengbenz.Embassy.eServices.Infrastructure.Identity;
 using Bengbenz.Embassy.eServices.Server.Components;
 using Bengbenz.Embassy.eServices.Server.Components.Account;
+using Bengbenz.Embassy.eServices.Server.Middleware;
 using Bengbenz.Embassy.eServices.UseCases;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -150,6 +151,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Add Blazor web assembly middleware
 app.MapRazorComponents<App>()
