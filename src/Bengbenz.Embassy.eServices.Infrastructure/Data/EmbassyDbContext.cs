@@ -1,5 +1,6 @@
 using Ardalis.SharedKernel;
 using Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
+using Bengbenz.Embassy.eServices.Core.ServiceOfferAggregrate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bengbenz.Embassy.eServices.Infrastructure.Data;
@@ -20,6 +21,7 @@ public sealed class EmbassyDbContext(DbContextOptions<EmbassyDbContext> options)
     private readonly IDomainEventDispatcher? _domainEventDispatcher;
     
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<ServiceOffer> ServiceOffers => Set<ServiceOffer>();
 
     public EmbassyDbContext(
         DbContextOptions<EmbassyDbContext> options,

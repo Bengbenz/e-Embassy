@@ -1,0 +1,93 @@
+@* @typeparam TEntity *@
+@* @typeparam TKey *@
+@* @using System.Reflection *@
+@* @inject IDialogService DialogService *@
+@* @inject ISnackbar Snackbar *@
+@* *@
+@* <PageTitle>@Title</PageTitle> *@
+@* *@
+@* <MudStack Row="true" Spacing="3" Class="pb-5"> *@
+@*     <MudIcon Icon="@TitleIcon" Size="Size.Large" /> *@
+@*     <MudText Typo="Typo.h5" GutterBottom="true">@TitleText</MudText> *@
+@*     <MudSpacer/> *@
+@*     <MudBreadcrumbs Class="pt-0" Items="@Breadcrumbs"></MudBreadcrumbs> *@
+@* </MudStack> *@
+@* *@
+@* <MudGrid> *@
+@*     <MudItem xs="12"> *@
+@*         <MudPaper Elevation="0"> *@
+@*             <MudTable Items="@_entities" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm" *@
+@*                       Loading="@_loading" Filter="OnSearch!" MultiSelection="false" SelectOnRowClick="true" SelectionChangeable="true" *@
+@*                       @bind-SelectedItem="@_selectedEntity" > *@
+@*                 <ToolBarContent> *@
+@*                     <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Outlined.Add" Size="Size.Medium" Color="Color.Primary" OnClick="@(() => OnCreate.InvokeAsync())"></MudFab></MudTooltip> *@
+@*                     <MudSpacer /> *@
+@*                     <MudTextField @bind-Value="@_searchText" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+@*                 </ToolBarContent> *@
+@*                 <HeaderContent> *@
+@*                     @foreach (var header in Headers) *@
+@*                     { *@
+@*                         <MudTh>@header</MudTh> *@
+@*                     } *@
+@*                     <MudTh Class="pr-10" Style="text-align:right">Actions</MudTh> *@
+@*                 </HeaderContent> *@
+@*                 <RowTemplate> *@
+@*                     @foreach (var field in EntityFields!) *@
+@*                     { *@
+@*                         <MudTd DataLabel="@field">@(context.GetType().GetProperty(field)?.GetValue(context, null))</MudTd> *@
+@*                     } *@
+@*                     <MudTd DataLabel="Actions" Style="text-align:right"> *@
+@*                         <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false" OnClick="@(() => OnEdit.InvokeAsync(context))"/></MudTooltip> *@
+@*                         <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false" OnClick="@(() => OnDelete.InvokeAsync(context))"/></MudTooltip> *@
+@*                     </MudTd> *@
+@*                 </RowTemplate> *@
+@*                 <NoRecordsContent> *@
+@*                     <MudText>No matching records found</MudText> *@
+@*                 </NoRecordsContent> *@
+@*                 <LoadingContent> *@
+@*                     <MudText>Loading...</MudText> *@
+@*                     <MudProgressCircular Color="Color.Default" Indeterminate="true" /> *@
+@*                 </LoadingContent> *@
+@*                 <PagerContent> *@
+@*                     @if(_entities.Count > PageSize) *@
+@*                     { *@
+@*                         <MudTablePager PageSizeOptions="@PageSizeOptions"/> *@
+@*                     } *@
+@*                 </PagerContent> *@
+@*             </MudTable> *@
+@*         </MudPaper> *@
+@*     </MudItem> *@
+@* </MudGrid> *@
+@* *@
+@* @code { *@
+@*     [Parameter] public string? Title { get; set; } *@
+@*     [Parameter] public string? TitleIcon { get; set; } *@
+@*     [Parameter] public string? TitleText { get; set; } *@
+@*     [Parameter] public List<BreadcrumbItem> Breadcrumbs { get; set; } = []; *@
+@*     [Parameter] public List<string> Headers { get; set; } = []; *@
+@*     [Parameter] public List<string> EntityFields { get; set; } = []; *@
+@*     [Parameter] public Func<Task<List<TEntity>>>? RetrieveEntities { get; set; } *@
+@*     [Parameter] public Func<Task<TEntity>, bool>? OnSearch { get; set; } *@
+@*     [Parameter] public EventCallback OnCreate { get; set; } *@
+@*     [Parameter] public EventCallback<TEntity> OnEdit { get; set; } *@
+@*     [Parameter] public EventCallback<TEntity> OnDelete { get; set; } *@
+@*     [Parameter] public int PageSize { get; set; } = 10; *@
+@*     [Parameter] public int[] PageSizeOptions { get; set; } = new int[] {10, 20, 30, 40, 50}; *@
+@* *@
+@*     private List<TEntity> _entities = new(); *@
+@*     private TEntity? _selectedEntity; *@
+@*     private bool _loading = true; *@
+@*     private string _searchText = ""; *@
+@* *@
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         _entities = await RetrieveEntities!.Invoke(); *@
+@*         _loading = false; *@
+@*     } *@
+@*      *@
+@*     private async Task ReloadEntities() *@
+@*     { *@
+@*         _entities = await RetrieveEntities!.Invoke(); *@
+@*         StateHasChanged(); *@
+@*     } *@
+@* } *@

@@ -7,6 +7,7 @@ using Bengbenz.Embassy.eServices.Infrastructure.Data.Queries;
 using Bengbenz.Embassy.eServices.Infrastructure.Identity;
 using Bengbenz.Embassy.eServices.UseCases;
 using Bengbenz.Embassy.eServices.UseCases.Categories.List;
+using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.List;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +45,8 @@ public static class InfrastructureServiceExtensions
         RegisterEntityFrameworkServices(services, configuration);
         
         services.AddScoped<IListCategoriesQueryService, ListCategoriesQueryService>();
+        services.AddScoped<IListServiceOffersQueryService, ListServiceOffersQueryService>();
+
         // if (isDevelopment)
         // {
         //     RegisterDevelopmentOnlyDependencies(services);

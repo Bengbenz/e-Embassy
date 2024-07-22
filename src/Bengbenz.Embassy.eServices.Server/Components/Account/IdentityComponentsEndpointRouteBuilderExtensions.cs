@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Json;
+using Bengbenz.Embassy.eServices.Core.Identity;
 
 namespace Microsoft.AspNetCore.Routing
 {

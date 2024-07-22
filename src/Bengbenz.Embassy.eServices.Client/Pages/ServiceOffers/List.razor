@@ -1,0 +1,163 @@
+@page "/Manage/Service-offers"
+@using Bengbenz.Embassy.eServices.Client.Components
+@using Bengbenz.Embassy.eServices.Client.Services
+@using Bengbenz.Embassy.eServices.UseCases.ServiceOffers
+@using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.Update
+@inject ServiceOfferService ServiceOfferService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>CAR e-Embassy - Manage Service offers</PageTitle>
+
+<MudStack Row="true" Spacing="3" Class="pb-5">
+    <MudIcon Icon="@Icons.Material.Outlined.HomeRepairService" Size="Size.Large" />
+    <MudText Typo="Typo.h5" GutterBottom="true">Offres de services</MudText>
+    <MudSpacer/>
+    <MudBreadcrumbs Class="pt-0" Items="_items"></MudBreadcrumbs>
+</MudStack>
+
+<MudGrid>
+    <MudItem xs="@(CanShowDetails ? 7 : 12)">
+        <MudPaper Elevation="0">
+            <MudTable Items="_serviceOffers" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
+                      Loading="_loadingMaster" Filter="new Func<ServiceOfferDto, bool>(FilterMasterFunc)" MultiSelection="false" SelectOnRowClick="true" SelectionChangeable="true"
+                      @bind-SelectedItem="_selectedServiceOfferMaster">
+                <ToolBarContent>
+                    <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Rounded.Add" Size="Size.Medium" Color="Color.Primary" OnClick="OpenCreateDialogAsync"></MudFab></MudTooltip>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchMasterText" Placeholder="Rechercher" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <ColGroup>
+                    <col style="width: 25%;"/>
+                    <col />
+                    <col style="width: 10%;" />
+                    <col style="width: 10%" />
+                    <col style="width: 10%" />
+                    <col style="width: 10%" />
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ServiceOfferDto, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<ServiceOfferDto, object>(x => x.Name)">Description</MudTableSortLabel></MudTh>
+                    <MudTd Style="text-align: center">Prix</MudTd>
+                    <MudTd Class="pl-7">Affichage</MudTd>
+                    <MudTd Class="pl-10">Status</MudTd>
+                    <MudTh Class="pr-10" Style="text-align:right">Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.Name</MudTd>
+                    <MudTd>@context.Description</MudTd>
+                    <MudTd Style="text-align: center">@context.UnitPrice €</MudTd>
+                    <MudTd>
+                        <MudChip T="string" Variant="Variant.Outlined" Color="@(context.IsFeatured ? Color.Primary :  Color.Default)">@(context.IsFeatured ? "Mise en avant" : "Standard")</MudChip>
+                    </MudTd>
+                    <MudTd>
+                        <MudChip T="string" Variant="Variant.Text" Color="@(context.IsPublished ? Color.Success :  Color.Warning)">@(context.IsPublished ? "Publié" : "Non publié")</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Actions" Style="text-align:right">
+                        <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false" OnClick="() => OpenEditDialogAsync(context)"/></MudTooltip>
+                        <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false" OnClick="() => OpenDeleteDialogAsync(context)"/></MudTooltip>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>No matching records found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Loading...</MudText>
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                </LoadingContent>
+                <PagerContent>
+                    <MudTablePager 
+                        HideRowsPerPage="CanHidePagerInfos"
+                        HidePageNumber="CanHidePagerInfos"
+                        HidePagination="CanHidePagerInfos"
+                        PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
+                </PagerContent>
+            </MudTable>
+        </MudPaper>
+    </MudItem>
+    @if (CanShowDetails)
+    {
+        <MudItem xs="@(CanShowDetails ? 5 : 12)" sm="5">
+            <Details SelectedItemId="@_selectedServiceOfferMaster.Id" OnEditClick="OpenEditDialogAsync" OnDeleteClick="OpenDeleteDialogAsync"></Details>
+        </MudItem>
+        <Delete @ref="_deleteMessageBox" TitleIcon="@Icons.Material.Rounded.DeleteForever"  TitleContentText="Supprimer ?" 
+                MessageContentText="@((MarkupString)$"Voulez-vous vraiment supprimer le service <b>{_selectedServiceOfferMaster.Name}</b> ?" )" 
+                SubmitButtonText="Supprimer"
+                OnDeleteConfirmClick="OnDeleteItem"/>
+    }
+</MudGrid>
+
+@code {
+    private readonly List<BreadcrumbItem> _items =
+    [
+        new BreadcrumbItem("Accueil", href: "/"),
+        new BreadcrumbItem("Settings", href: null, disabled: true),
+        new BreadcrumbItem("Offres de services", href: null, disabled: true)
+    ];
+    private Delete? _deleteMessageBox;
+    
+    private List<ServiceOfferDto> _serviceOffers =[];
+    private ServiceOfferDto _selectedServiceOfferMaster = new();
+
+    private string _searchMasterText = "";
+    private bool _loadingMaster = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _serviceOffers = await ServiceOfferService.ListAsync();
+        _loadingMaster = false;
+    }
+    
+    private bool CanShowDetails => _selectedServiceOfferMaster.Id != 0;
+    private bool CanHidePagerInfos => _serviceOffers.Count <= ServiceOfferConstants.PERPAGE_SIZE;
+    
+    private bool FilterMasterFunc(ServiceOfferDto element) => LookingFor(element, _searchMasterText);
+
+    private bool LookingFor(ServiceOfferDto element, string searchString = "")
+        => string.IsNullOrWhiteSpace(searchString) || element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    
+    private async Task ReloadServiceOfferItems()
+    {
+        _serviceOffers = await ServiceOfferService.ListAsync();
+        StateHasChanged();
+    }
+    
+    private async Task OpenCreateDialogAsync()
+    {
+        var dialogParameters = new DialogParameters<Create>
+        {
+            { x => x.TitleIcon, Icons.Material.Rounded.AddCircle },
+            { x => x.TitleContentText, "Ajouter une offre de service" },
+            { x => x.SubmitButtonText, "Valider" },
+            { x => x.SubmitColor, Color.Primary },
+            { x => x.OnSaveClick, new EventCallback(null, ReloadServiceOfferItems) }
+        };
+        await DialogService.ShowAsync<Create>("Créer une offre de service", dialogParameters);
+    }
+    
+    private async Task OpenEditDialogAsync(ServiceOfferDto serviceOffer)
+    {
+        var dialogParameters = new DialogParameters<Edit>
+        {
+            { x => x.TitleIcon, Icons.Material.Rounded.Edit },
+            { x => x.TitleContentText, "Modifier" },
+            { x => x.SubmitButtonText, "Valider" },
+            { x => x.SubmitColor, Color.Primary },
+            { x => x.ItemRequest, new UpdateServiceOfferRequest() },
+            { x => x.OnSaveClick, new EventCallback(null, ReloadServiceOfferItems) }
+        };
+        await DialogService.ShowAsync<Edit>("Modifier", dialogParameters);
+    }
+    
+    private async Task OpenDeleteDialogAsync(ServiceOfferDto serviceOffer)
+    {
+        var result = await _deleteMessageBox!.ShowAsync(serviceOffer.Id);
+        if (result is not null)
+        {
+            Snackbar.Add(new MarkupString($"Service <b><i>{serviceOffer.Name}</i></b> supprimé !"), Severity.Success);
+            await ReloadServiceOfferItems();
+        }
+    }
+    
+    private async Task OnDeleteItem(int itemId) => await ServiceOfferService.DeleteAsync(itemId);
+}

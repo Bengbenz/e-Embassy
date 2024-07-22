@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Bengbenz.Embassy.eServices.UseCases;
@@ -21,9 +22,7 @@ public static class UseCasesExtensions
     this IServiceCollection services,
     ILogger logger)
     {
-        // services.AddScoped(typeof(IQueryHandler<,>), typeof(ListCategoriesHandler));
-        
-        //services.AddValidatorsFromAssemblyContaining<UseCasesExtensions>();
+        services.AddValidatorsFromAssemblyContaining<MappingProfile>();
         logger.LogInformation("{Project} services registered", "UseCases");
         return services;
     }

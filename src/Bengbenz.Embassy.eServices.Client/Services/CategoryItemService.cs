@@ -19,7 +19,7 @@ namespace Bengbenz.Embassy.eServices.Client.Services;
 /// </remarks>
 public class CategoryItemService(HttpService httpService, ILogger<CategoryItemService> logger)
 {
-  private const string BaseWebApiUrl = "categories";
+  private const string BaseWebApiUrl = "Categories";
   
   /// <summary>
   /// Lists all root category items.

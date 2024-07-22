@@ -1,4 +1,6 @@
 using Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
+using Bengbenz.Embassy.eServices.Core.ServiceOfferAggregrate;
+using Bengbenz.Embassy.eServices.Infrastructure.Identity.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +27,14 @@ public static class EmbassyDbContextSeed
                     GetPreconfiguredCategories());
             
                 await embassyContext.SaveChangesAsync();
+            }
+            
+            if (!await embassyContext.ServiceOffers.AnyAsync())
+            {
+              await embassyContext.ServiceOffers.AddRangeAsync(
+                GetPreconfiguredServices());
+            
+              await embassyContext.SaveChangesAsync();
             }
         }
         catch (Exception ex)
@@ -53,5 +63,18 @@ public static class EmbassyDbContextSeed
             new( "Services aux nationaux",  subCategories),
             new("Services aux étrangers")
         };
+    }
+    
+    static IReadOnlyCollection<ServiceOffer> GetPreconfiguredServices()
+    {
+      var services = new List<ServiceOffer>
+      {
+        new("Certificat de coutume par le nom", "Certificat de coutume par le nom",  33,AuthorizationConstants.ADMINISTRATORS_USERNAME),
+        new("Attestation de mariage", "Attestation de mariage",  45, AuthorizationConstants.ADMINISTRATORS_USERNAME),
+        new("Attestation de célibat", "Attestation de célibat",  50, AuthorizationConstants.ADMINISTRATORS_USERNAME),
+        new("Attestation de non-dissolution de PACS", "Attestation de non-dissolution de PACS", 65,AuthorizationConstants.ADMINISTRATORS_USERNAME),
+      };
+
+      return services;
     }
 }
