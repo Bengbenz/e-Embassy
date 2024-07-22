@@ -1,6 +1,8 @@
 @page "/Admin/Categories"
+@using Bengbenz.Embassy.eServices.Client.Components
 @using Bengbenz.Embassy.eServices.Client.Services
 @using Bengbenz.Embassy.eServices.UseCases.Categories
+@using Bengbenz.Embassy.eServices.UseCases.Categories.Update
 @inject CategoryItemService CategoryItemService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
@@ -15,10 +17,10 @@
 </MudStack>
 
 <MudGrid>
-    <MudItem xs="@(CanShowDetails ? 8 : 12)" sm="7">
-        <MudPaper Elevation="3">
+    <MudItem xs="@(CanShowDetails ? 7 : 12)">
+        <MudPaper Elevation="0">
             <MudTable Items="_categories" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
-                      Loading="_loadingMaster" Filter="new Func<CategoryDto, bool>(FilterMasterFunc)"
+                      Loading="_loadingMaster" Filter="new Func<CategoryDto, bool>(FilterMasterFunc)" MultiSelection="false" SelectOnRowClick="true" SelectionChangeable="true"
                       @bind-SelectedItem="_selectedCategoryMaster" >
                 <ToolBarContent>
                     <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Outlined.Add" Size="Size.Medium" Color="Color.Primary" OnClick="OpenCreateDialogAsync"></MudFab></MudTooltip>
@@ -32,7 +34,6 @@
                 <RowTemplate>
                     <MudTd DataLabel="Nom">@context.Name</MudTd>
                     <MudTd DataLabel="Actions" Style="text-align:right">
-                        <!--<MudTooltip Text="Details"><MudFab StartIcon="@Icons.Material.Outlined.RemoveRedEye" Size="Size.Small" DropShadow="false"/></MudTooltip> !-->
                         <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false" OnClick="() => OpenEditDialogAsync(context)"/></MudTooltip>
                         <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false" OnClick="() => OpenDeleteDialogAsync(context)"/></MudTooltip>
                     </MudTd>
@@ -55,9 +56,13 @@
     </MudItem>
     @if (CanShowDetails)
     {
-        <MudItem xs="12" sm="5">
-            <Details SelectedItem="@_selectedCategoryMaster"></Details>
+        <MudItem xs="@(CanShowDetails ? 5 : 12)" sm="5">
+            <Details SelectedItemId="@_selectedCategoryMaster.Id" OnEditClick="OpenEditDialogAsync" OnDeleteClick="OpenDeleteDialogAsync"></Details>
         </MudItem>
+        <Delete @ref="_deleteMessageBox" TitleIcon="@Icons.Material.Filled.DeleteForever"  TitleContentText="Supprimer ?" 
+                MessageContentText="@((MarkupString)$"Voulez-vous vraiment supprimer la catégorie <b>{_selectedCategoryMaster.Name}</b> ?" )" 
+                SubmitButtonText="Supprimer"
+                OnDeleteConfirmClick="OnDeleteItem"/> <!--<b>{selectedCategoryMaster.Name}</b> -->
     }
 </MudGrid>
 
@@ -68,22 +73,13 @@
         new BreadcrumbItem("Services", href: null, disabled: true),
         new BreadcrumbItem("Categories & sous-catégories", href: null, disabled: true)
     ];
+    private Delete? _deleteMessageBox;
     
     private List<CategoryDto> _categories =[];
     private CategoryDto _selectedCategoryMaster = new();
 
     private string _searchMasterText = "";
     private bool _loadingMaster = true;
-    
-    // protected override async Task OnAfterRenderAsync(bool isFirstRender)
-    // {
-    //     if (isFirstRender)
-    //     {
-    //         _categories = await CategoryItemService.ListAsync();
-    //     }
-    //     
-    //     await base.OnAfterRenderAsync(isFirstRender);
-    // }
     
     protected override async Task OnInitializedAsync()
     {
@@ -98,7 +94,7 @@
     private bool LookingFor(CategoryDto element, string searchString = "")
         => string.IsNullOrWhiteSpace(searchString) || element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
     
-    private async Task ReloadCatalogItems()
+    private async Task ReloadCategoryItems()
     {
         _categories = await CategoryItemService.ListAsync();
         StateHasChanged();
@@ -108,49 +104,38 @@
     {
         var dialogParameters = new DialogParameters<Create>
         {
-            { x => x.TitleIcon, Icons.Material.Filled.Create },
-            { x => x.TitleContentText, "Ajouter" },
+            { x => x.TitleIcon, Icons.Material.Filled.AddCircle },
+            { x => x.TitleContentText, "Ajouter une categorie" },
             { x => x.SubmitButtonText, "Valider" },
-            { x => x.SubmitColor, Color.Primary }
+            { x => x.SubmitColor, Color.Primary },
+            { x => x.OnSaveClick, new EventCallback(null, ReloadCategoryItems) }
         };
-        var dialog = await DialogService.ShowAsync<Create>("Créer une catégorie de service", dialogParameters);
-        var result = dialog.Result;
-        if (!result.IsCanceled)
-        {
-            await ReloadCatalogItems();
-        }
+        await DialogService.ShowAsync<Create>("Créer une catégorie de service", dialogParameters);
     }
     
     private async Task OpenEditDialogAsync(CategoryDto category)
     {
         var dialogParameters = new DialogParameters<Edit>
         {
-            { x => x.TitleIcon, Icons.Material.Filled.Update },
+            { x => x.TitleIcon, Icons.Material.Filled.Edit },
             { x => x.TitleContentText, "Modifier" },
             { x => x.SubmitButtonText, "Valider" },
             { x => x.SubmitColor, Color.Primary },
-            { x => x.Item, category }
+            { x => x.ItemRequest, new UpdateCategoryRequest(category.Id, category.Name, category.ParentCategoryId, category.ParentCategoryName) },
+            { x => x.OnSaveClick, new EventCallback(null, ReloadCategoryItems) }
         };
-        var dialog = await DialogService.ShowAsync<Edit>("Modifier", dialogParameters);
-        var result = dialog.Result;
-        if (!result.IsCanceled)
-        {
-            await ReloadCatalogItems();
-        }
+        await DialogService.ShowAsync<Edit>("Modifier", dialogParameters);
     }
     
     private async Task OpenDeleteDialogAsync(CategoryDto category)
     {
-        var parameters = new DialogParameters<Delete>
+        var result = await _deleteMessageBox!.ShowAsync(category.Id);
+        if (result is not null)
         {
-            { x => x.Item, category }
-        };
-        var dialog = await DialogService.ShowAsync<Delete>("Supprimer", parameters); 
-        var result = dialog.Result;
-        if (!result.IsCanceled)
-        {
-            Snackbar.Add($"Category {category.Name} supprimé !", Severity.Success);
-            await ReloadCatalogItems();
+            Snackbar.Add(new MarkupString($"Category <b><i>{category.Name}' supprimé !"), Severity.Success);
+            await ReloadCategoryItems();
         }
     }
+    
+    private async Task OnDeleteItem(int itemId) => await CategoryItemService.DeleteAsync(itemId);
 }

@@ -1,0 +1,60 @@
+@inject ISnackbar Snackbar
+
+<MudMessageBox @ref="_mudMessageBox">
+    <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@TitleIcon" Class="mr-3" />
+                @TitleContentText
+            </MudText>
+    </TitleContent>
+    <MessageContent>
+        @MessageContentText
+    </MessageContent>
+    <CancelButton>
+        <MudButton Variant="Variant.Outlined">Annuler</MudButton>
+    </CancelButton>
+    <YesButton >
+        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Error" Disabled="@_processing">
+        @if (_processing)
+        {
+            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+            <MudText Class="ms-2"> @SubmitButtonText</MudText>
+        }
+        else
+        {
+            @SubmitButtonText
+        }
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
+
+
+@code {
+    [Parameter]
+    public string? TitleIcon { get; set; }
+    [Parameter]
+    public string? TitleContentText { get; set; }
+    [Parameter]
+    public MarkupString MessageContentText { get; set; }
+    [Parameter]
+    public string? SubmitButtonText { get; set; }
+    [Parameter]
+    public EventCallback<int> OnDeleteConfirmClick { get; set; }
+    [Parameter]
+    public EventCallback<string> OnSaveClick { get; set; }
+
+    private MudMessageBox? _mudMessageBox;
+    private bool _processing;
+
+    public async Task<bool?> ShowAsync(int itemId, DialogOptions? options = null)
+    {
+       var result = await _mudMessageBox!.ShowAsync(options);
+       if (result is null) return result;
+       
+       _processing = true;
+       await OnDeleteConfirmClick.InvokeAsync(itemId);
+       _processing = false;
+
+       return result;
+    }
+}
