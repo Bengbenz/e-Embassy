@@ -1,0 +1,91 @@
+@using Bengbenz.Embassy.eServices.Client.Services
+@using Bengbenz.Embassy.eServices.UseCases.ServiceOffers
+@using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.Create
+@inject ServiceOfferService ServiceOfferService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (_selectedItem is null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" Class="justify-content-center align-content-center" />
+}
+else
+{
+    <MudCard Elevation="3" >
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudStack Row="true">
+                    <MudText Typo="Typo.h5">@_selectedItem.Name</MudText>
+                    <MudSpacer></MudSpacer>
+                    <MudTextField @bind-Value="_searchDetailsText" Placeholder="Rechercher"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium" Class="mt-0">
+                    </MudTextField>
+                </MudStack>
+                <MudDivider/>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            Rien pour le moment
+        </MudCardContent>
+        <MudCardActions>
+            <MudSpacer />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => OpenEditDialogAsync(_selectedItem)">Modifier</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    [Parameter]
+    public EventCallback<ServiceOfferDto> OnEditClick { get; set; }
+    [Parameter]
+    public EventCallback<ServiceOfferDto> OnDeleteClick { get; set; }
+    [Parameter]
+    public int SelectedItemId { get; set; }
+    
+    private ServiceOfferDto? _selectedItem { get; set; }
+    // private bool _loadingDetails = true;
+    private string _searchDetailsText = "";
+    
+    private bool FilterDetailsFunc(ServiceOfferDto element) => LookingFor(element, _searchDetailsText);
+    
+    private bool LookingFor(ServiceOfferDto element, string searchString = "")
+     => string.IsNullOrWhiteSpace(searchString) || element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    
+    protected override async Task OnParametersSetAsync()
+    { 
+        _selectedItem = await ServiceOfferService.GetByIdAsync(SelectedItemId);
+        // _loadingDetails = false;
+        await base.OnParametersSetAsync();
+    }
+    
+    private async Task OpenEditDialogAsync(ServiceOfferDto serviceOffer)
+    {
+        await OnEditClick.InvokeAsync(serviceOffer);
+    }
+    
+    private async Task OpenDeleteDialogAsync(ServiceOfferDto serviceOffer)
+    {
+        await OnDeleteClick.InvokeAsync(serviceOffer);
+    }
+    
+    private async Task OpenCreateDialogAsync()
+    {
+        var dialogParameters = new DialogParameters<Create>
+        {
+            { x => x.TitleIcon, Icons.Material.Filled.AddCircle },
+            { x => x.TitleContentText, "Ajouter une sous-categorie" },
+            { x => x.SubmitButtonText, "Valider" },
+            { x => x.SubmitColor, Color.Primary },
+            { x => x.ItemRequest, new CreateServiceOfferRequest (_selectedItem!.Name, _selectedItem!.Description, "", 22, false, "Admin", _selectedItem!.CategoryId)},
+            { x => x.OnSaveClick, new EventCallback(null, ReloadCategoryItems) }
+        };
+        await DialogService.ShowAsync<Create>(string.Empty, dialogParameters);
+    }
+    
+    private async Task ReloadCategoryItems()
+    {
+        _selectedItem = await ServiceOfferService.GetByIdAsync(SelectedItemId);
+        StateHasChanged();
+    }
+}

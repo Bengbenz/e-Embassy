@@ -30,8 +30,8 @@ public class CreateCategoryHandler(IRepository<Category> categoryRepository)
   /// <inheritdoc />
   public async Task<Result<int>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
   {
-    var catalogItemNameSpecification = new CategoryNameSpecification(command.Name);
-    var existingCategoryItem = await categoryRepository.CountAsync(catalogItemNameSpecification, cancellationToken);
+    var categoryItemNameSpecification = new CategoryNameSpecification(command.Name);
+    var existingCategoryItem = await categoryRepository.CountAsync(categoryItemNameSpecification, cancellationToken);
     if (existingCategoryItem > 0)
     {
       throw new DuplicateException($"A Category with name {command.Name} already exists.");

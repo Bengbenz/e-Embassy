@@ -23,6 +23,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Categories\" />
+    <AdditionalFiles Include="Pages\Categories\Create.razor" />
+    <AdditionalFiles Include="Pages\Categories\Details.razor" />
+    <AdditionalFiles Include="Pages\Categories\Edit.razor" />
+    <AdditionalFiles Include="Pages\Categories\List.razor" />
+    <AdditionalFiles Include="Pages\ServiceOffers\Create.razor" />
+    <AdditionalFiles Include="Pages\ServiceOffers\Details.razor" />
+    <AdditionalFiles Include="Pages\ServiceOffers\Edit.razor" />
+    <AdditionalFiles Include="Pages\ServiceOffers\List.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Admin\ServiceOffers\Create.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Admin\ServiceOffers\Details.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Admin\ServiceOffers\Edit.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Admin\ServiceOffers\List.razor" />
   </ItemGroup>
 </Project>

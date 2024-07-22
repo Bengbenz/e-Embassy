@@ -3,6 +3,7 @@ using Ardalis.ListStartupServices;
 using Bengbenz.Embassy.eServices.Client;
 using Bengbenz.Embassy.eServices.Client.Shared;
 using Bengbenz.Embassy.eServices.Core;
+using Bengbenz.Embassy.eServices.Core.Identity;
 using Bengbenz.Embassy.eServices.Infrastructure;
 using Bengbenz.Embassy.eServices.Infrastructure.Data;
 using Bengbenz.Embassy.eServices.Infrastructure.Identity;
@@ -54,8 +55,8 @@ builder.Services.AddAuthorization();
 // Configuration for development environment to keep secrets out of source control.
 if (builder.Environment.IsDevelopment())
 {
-    // ApplicationUser is used to look up the assembly that contains the user secrets.
-    builder.Configuration.AddUserSecrets<ApplicationUser>();
+    // EmbassyDbContext is used to look up the assembly that contains the user secrets.
+    builder.Configuration.AddUserSecrets<EmbassyDbContext>();
 }
 
 // Add web api controllers services.

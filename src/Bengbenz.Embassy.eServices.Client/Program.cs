@@ -1,8 +1,7 @@
 using Bengbenz.Embassy.eServices.Client;
-using Bengbenz.Embassy.eServices.UseCases;
 using Bengbenz.Embassy.eServices.UseCases.Categories.Create;
 using Bengbenz.Embassy.eServices.UseCases.Categories.Update;
-using FluentValidation;
+using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.Create;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
@@ -31,11 +30,6 @@ builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticat
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api") });
 builder.Services.AddClientServices();
-
-//builder.Services.AddValidatorsFromAssemblyContaining<UseCasesExtensions>();
-builder.Services.AddScoped<CreateCategoryRequestValidator>();
-builder.Services.AddScoped<UpdateCategoryRequestValidator>();
-
 
 builder.Logging.AddConfiguration(builder.Configuration.GetRequiredSection("Logging"));
 

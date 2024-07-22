@@ -1,3 +1,4 @@
+using Bengbenz.Embassy.eServices.Core.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

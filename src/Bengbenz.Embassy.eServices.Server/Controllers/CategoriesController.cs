@@ -14,7 +14,7 @@ using Bengbenz.Embassy.eServices.UseCases.Categories.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bengbenz.Embassy.eServices.Server.Controllers.Categories;
+namespace Bengbenz.Embassy.eServices.Server.Controllers;
 
 /// <summary>
 /// Controller responsible for handling category-related requests.
@@ -25,7 +25,7 @@ namespace Bengbenz.Embassy.eServices.Server.Controllers.Categories;
 /// of concerns and adherence to the CQRS pattern. AutoMapper is used to map between domain entities and DTOs,
 /// simplifying the transformation logic.
 /// </remarks>
-public sealed class CategoryController(ILogger<CategoryController> logger, IMediator mediator, IMapper mapper)
+public sealed class CategoriesController(ILogger<CategoriesController> logger, IMediator mediator, IMapper mapper)
   : BaseApiController(logger, mediator)
 {
   /// <summary>
@@ -35,7 +35,7 @@ public sealed class CategoryController(ILogger<CategoryController> logger, IMedi
   /// <returns>A list of root categories with their subcategories.</returns>
   /// <response code="200">Returns the list of categories</response>
   /// <response code="404">If no categories are found</response>
-  [HttpGet("categories")]
+  [HttpGet]
   [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status200OK)]
@@ -66,7 +66,7 @@ public sealed class CategoryController(ILogger<CategoryController> logger, IMedi
   /// <returns>The requested category with its subcategories.</returns>
   /// <response code="200">Returns the requested category and its subcategories</response>
   /// <response code="404">If the category is not found</response>
-  [HttpGet("categories/{id}")]
+  [HttpGet("{id}")]
   [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status200OK)]
@@ -96,7 +96,7 @@ public sealed class CategoryController(ILogger<CategoryController> logger, IMedi
   /// <returns>The ID of the newly created category.</returns>
   /// <response code="200">Returns the ID of the newly created category</response>
   /// <response code="204">If the request is successful but no content is created</response>
-  [HttpPost("categories")]
+  [HttpPost]
   [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<ActionResult<int>> CreateAsync([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
@@ -123,7 +123,7 @@ public sealed class CategoryController(ILogger<CategoryController> logger, IMedi
   /// <response code="200">Returns the updated category DTO</response>
   /// <response code="404">If the category does not exist</response>
   /// <response code="204">If the update operation did not result in any changes</response>
-  [HttpPut("categories")]
+  [HttpPut]
   [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -156,7 +156,7 @@ public sealed class CategoryController(ILogger<CategoryController> logger, IMedi
   /// </remarks>
   /// <response code="404">If the category does not exist</response>
   /// <response code="204">If the deletion was successful</response>
-  [HttpDelete("categories/{id}")]
+  [HttpDelete("{id}")]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<ActionResult> DeleteAsync([FromRoute]int id, CancellationToken cancellationToken)

@@ -4,7 +4,9 @@
 
 using AutoMapper;
 using Bengbenz.Embassy.eServices.Core.CategoryAggregrate;
+using Bengbenz.Embassy.eServices.Core.ServiceOfferAggregrate;
 using Bengbenz.Embassy.eServices.UseCases.Categories;
+using Bengbenz.Embassy.eServices.UseCases.ServiceOffers;
 
 namespace Bengbenz.Embassy.eServices.UseCases;
 
@@ -13,5 +15,6 @@ public class MappingProfile : Profile
   public MappingProfile()
   {
     CreateMap<Category, CategoryDto>();
+    CreateMap<ServiceOffer, ServiceOfferDto>();
   }
 }

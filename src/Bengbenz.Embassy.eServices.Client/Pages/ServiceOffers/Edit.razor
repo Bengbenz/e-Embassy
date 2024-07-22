@@ -1,0 +1,99 @@
+@using Bengbenz.Embassy.eServices.Client.Services
+@using Bengbenz.Embassy.eServices.UseCases.Categories.Update
+@using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.Update
+@inject ServiceOfferService ServiceOfferService
+@inject UpdateCategoryRequestValidator UpdateCategoryRequestValidator
+@inject ISnackbar Snackbar
+
+@if (ItemRequest is null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" Class="justify-content-center align-content-center"/>
+}
+else
+{
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@TitleIcon" Class="mr-3" />
+                @TitleContentText
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudForm Model="@ItemRequest" @ref="_form" Validation="@(UpdateCategoryRequestValidator.ValidateValue)" ValidationDelay="1">
+                @if (ItemRequest.CategoryId is not null)
+                {
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.subtitle2" Align="Align.Center">Categorie :</MudText>
+                                <MudText Typo="Typo.subtitle1" Align="Align.Center">@ItemRequest.CategoryId</MudText>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                }
+                <MudTextField @bind-Value="ItemRequest.Name"
+                              For="@(() => ItemRequest.Name)"
+                              InputType="InputType.Text"
+                              Variant="Variant.Outlined"
+                              Label="Nom"
+                              Required="true"
+                              HelperText="Modifez le nom de la catégorie"/>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="@SubmitColor" Class="px-6 mr-4"
+                       Disabled="@_processing" OnClick="Submit">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                <MudText Class="ms-2"> @SubmitButtonText</MudText>
+            }
+            else
+            {
+                @SubmitButtonText
+            }
+            </MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+    
+    [Parameter]
+    public string? TitleIcon { get; set; }
+    [Parameter]
+    public string? TitleContentText { get; set; }
+    [Parameter]
+    public string? SubmitButtonText { get; set; }
+    [Parameter]
+    public Color SubmitColor { get; set; }
+    [Parameter]
+    public UpdateServiceOfferRequest? ItemRequest { get; set; }
+    [Parameter]
+    public EventCallback OnSaveClick { get; set; }
+    
+    private MudForm? _form;
+    private bool _processing;
+
+    private async Task Submit()
+    {
+        _processing = true;
+        await _form!.Validate();
+        if (_form.IsValid)
+        {
+            var result = await ServiceOfferService.EditAsync(ItemRequest!);
+            if (result is not null)
+            {
+                MudDialog!.Close(DialogResult.Ok(true));
+                Snackbar.Add(new MarkupString($"Service <b><i>{ItemRequest!.Name}</i></b> modifé !"), Severity.Success);
+                await OnSaveClick.InvokeAsync();
+            }
+        }
+        _processing = false;
+    }
+
+    private void Cancel() => MudDialog!.Cancel();
+}

@@ -1,10 +1,10 @@
 ﻿<MudPaper Width="250px" Elevation="0" Class="py-3">
 	<MudNavMenu>
-		<MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Accueil</MudNavLink>
-		<MudNavLink Href="/mes-demandes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History">Mes demandes</MudNavLink>
-		<MudNavGroup Title="Services" Icon="@Icons.Material.Outlined.DesignServices" @bind-Expanded=_expanded>
-			<MudNavLink Href="Services/aux-etrangers" Icon="@Icons.Material.Outlined.Contacts">Aux étrangers</MudNavLink>
-			<MudNavLink Href="Services/aux-centrafricains" Icon="@Icons.Material.Outlined.ContactMail">Aux Centrafricains</MudNavLink>
+		<MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.TwoTone.Home">Accueil</MudNavLink>
+		<MudNavLink Href="/mes-demandes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.History">Mes demandes</MudNavLink>
+		<MudNavGroup Title="Services" Icon="@Icons.Material.TwoTone.DesignServices" @bind-Expanded=_expandedServiceMenu>
+			<MudNavLink Href="Services/aux-etrangers" Icon="@Icons.Material.TwoTone.Contacts">Aux étrangers</MudNavLink>
+			<MudNavLink Href="Services/aux-centrafricains" Icon="@Icons.Material.TwoTone.ContactMail">Aux Centrafricains</MudNavLink>
 		</MudNavGroup>
 	</MudNavMenu>
 </MudPaper>
@@ -13,17 +13,22 @@
 	<MudNavMenu>
 		<AuthorizeView>
 			<Authorized>
-				<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@context.User.Identity?.Name</MudNavLink>
+				<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.List">@context.User.Identity?.Name</MudNavLink>
 			</Authorized>
             <NotAuthorized>
-                <MudNavLink Href="Admin/Categories" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category">Categories</MudNavLink>
-                <MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Register</MudNavLink>
-                <MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
+                <MudNavGroup Title="Settings" Icon="@Icons.Material.TwoTone.Settings" @bind-Expanded=_expandedSettingsMenu>
+                    <MudNavLink Href="Manage/Categories" Match="NavLinkMatch.All" Icon="@Icons.Material.TwoTone.Category">Categories</MudNavLink>
+                    <MudNavLink Href="Manage/Service-offers" Match="NavLinkMatch.All" Icon="@Icons.Material.TwoTone.HomeRepairService">Services</MudNavLink>
+                    <MudNavLink Href="Account/Manage" Match="NavLinkMatch.All" Icon="@Icons.Material.TwoTone.ManageAccounts">Utilisateurs</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="Account/Register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Login">Register</MudNavLink>
+                <MudNavLink Href="Account/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Logout">Logout</MudNavLink>
             </NotAuthorized>
 		</AuthorizeView>
 	</MudNavMenu>
 </MudPaper>
 
 @code {
-	bool _expanded = true;
+	bool _expandedServiceMenu = true;
+    bool _expandedSettingsMenu = true;
 }
