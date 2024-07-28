@@ -17,7 +17,7 @@ namespace Bengbenz.Embassy.eServices.UseCases.Categories;
 /// </remarks>
 public record CategoryDto(int Id, string Name, int? ParentCategoryId = null, string? ParentCategoryName = null)
 {
-  public int Id { get; } = Id;
+  public int Id { get; set; } = Id;
   public string Name { get; set; } = Name;
   public string? ParentCategoryName { get; set; } = ParentCategoryName;
   public CategoryDto(): this(0, string.Empty)
