@@ -8,7 +8,7 @@ public record ServiceOfferDto(int Id, string Name, string Description, decimal U
 {
   public ServiceOfferDto():this(0, string.Empty, string.Empty, default,string.Empty)
   {}
-  public int Id { get; } = Id;
+  public int Id { get; set; } = Id;
   public string Name { get; set; } = Name;
   public string Description { get; set; } = Description;
   public string? ImageUri { get; set; }

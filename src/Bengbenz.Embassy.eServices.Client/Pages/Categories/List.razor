@@ -46,10 +46,11 @@
                     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
                 </LoadingContent>
                 <PagerContent>
-                    @if(_categories.Count > 10)
-                    {
-                        <MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
-                    }
+                    <MudTablePager 
+                        HideRowsPerPage="CanHidePagerInfos"
+                        HidePageNumber="CanHidePagerInfos"
+                        HidePagination="CanHidePagerInfos"
+                        PageSizeOptions="new int[] {10, 20, 30, 40, 50}"/>
                 </PagerContent>
             </MudTable>
         </MudPaper>
@@ -88,6 +89,7 @@
     }
     
     private bool CanShowDetails => _selectedCategoryMaster.Id != 0;
+    private bool CanHidePagerInfos => _categories.Count <= CategoryConstants.PERPAGE_SIZE;
     
     private bool FilterMasterFunc(CategoryDto element) => LookingFor(element, _searchMasterText);
 
