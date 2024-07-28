@@ -363,3 +363,13 @@ src/.DS_Store
 *.DotSettings
 src/Bengbenz.Embassy.eServices.Server/wwwroot/img/Log in_files/*
 src/Bengbenz.Embassy.eServices.Server/wwwroot/img/Log in.html
+
+# Playwright
+/test-results/
+/tests-examples/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/user.json
+.azure
