@@ -1,4 +1,4 @@
-@page "/Service-offers/{CategoryId:int}"
+@page "/Manage/Service-offers"
 @using Bengbenz.Embassy.eServices.Client.Components
 @using Bengbenz.Embassy.eServices.Client.Services
 @using Bengbenz.Embassy.eServices.UseCases.ServiceOffers
@@ -6,22 +6,23 @@
 @inject ServiceOfferService ServiceOfferService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
-<PageTitle>CAR e-Embassy - Service offers</PageTitle>
+<PageTitle>CAR e-Embassy - Manage Service offers</PageTitle>
 
 <MudStack Row="true" Spacing="3" Class="pb-5">
     <MudIcon Icon="@Icons.Material.Outlined.HomeRepairService" Size="Size.Large" />
     <MudText Typo="Typo.h5" GutterBottom="true">Offres de services</MudText>
     <MudSpacer/>
-    <MudBreadcrumbs Class="pt-0" Items="_items"></MudBreadcrumbs>
+    <MudBreadcrumbs Class="pt-0" Items="_breadcrumbItems"></MudBreadcrumbs>
 </MudStack>
 
 <MudGrid>
-    <MudItem xs="@(CanShowDetails ? 7 : 12)">
+    <MudItem xl="12" xs="12">
         <MudPaper Elevation="0">
             <MudTable Items="_serviceOffers" Hover="true" SortLabel="Sort By" Elevation="0" Striped="true" Breakpoint="Breakpoint.Sm"
                       Loading="_loadingMaster" Filter="new Func<ServiceOfferDto, bool>(FilterMasterFunc)" MultiSelection="false" SelectOnRowClick="true" SelectionChangeable="true"
-                      @bind-SelectedItem="_selectedServiceOfferMaster">
+                      @bind-SelectedItem="_selectedServiceOffer">
                 <ToolBarContent>
                     <MudTooltip Text="Ajouter"><MudFab StartIcon="@Icons.Material.Rounded.Add" Size="Size.Medium" Color="Color.Primary" OnClick="OpenCreateDialogAsync"></MudFab></MudTooltip>
                     <MudSpacer />
@@ -33,7 +34,7 @@
                     <col style="width: 10%;" />
                     <col style="width: 10%" />
                     <col style="width: 10%" />
-                    <col style="width: 10%" />
+                    <col style="width: 15%" />
                 </ColGroup>
                 <HeaderContent>
                     <MudTh><MudTableSortLabel SortBy="new Func<ServiceOfferDto, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
@@ -54,8 +55,18 @@
                         <MudChip T="string" Variant="Variant.Text" Color="@(context.IsPublished ? Color.Success :  Color.Warning)">@(context.IsPublished ? "Publié" : "Non publié")</MudChip>
                     </MudTd>
                     <MudTd DataLabel="Actions" Style="text-align:right">
-                        <MudTooltip Text="Editer"><MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false" OnClick="() => OpenEditDialogAsync(context)"/></MudTooltip>
-                        <MudTooltip Text="Supprimer"><MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false" OnClick="() => OpenDeleteDialogAsync(context)"/></MudTooltip>
+                        <MudTooltip Text="Editer">
+                            <MudFab StartIcon="@Icons.Material.Outlined.RemoveRedEye" IconColor="Color.Default" Size="Size.Small" DropShadow="false"
+                                    OnClick="() => NavigateToDetails(context)"/>
+                        </MudTooltip>
+                        <MudTooltip Text="Editer">
+                            <MudFab StartIcon="@Icons.Material.Outlined.Edit" IconColor="Color.Tertiary" Size="Size.Small" DropShadow="false"
+                                    OnClick="() => OpenEditDialogAsync(context)"/>
+                        </MudTooltip>
+                        <MudTooltip Text="Supprimer">
+                            <MudFab StartIcon="@Icons.Material.Outlined.Delete" IconColor="Color.Secondary" Size="Size.Small" DropShadow="false"
+                                    OnClick="() => OpenDeleteDialogAsync(context)"/>
+                        </MudTooltip>
                     </MudTd>
                 </RowTemplate>
                 <NoRecordsContent>
@@ -75,20 +86,17 @@
             </MudTable>
         </MudPaper>
     </MudItem>
-    @if (CanShowDetails)
-    {
-        <MudItem xs="@(CanShowDetails ? 5 : 12)" sm="5">
-            <Details SelectedItemId="@_selectedServiceOfferMaster.Id" OnEditClick="OpenEditDialogAsync" OnDeleteClick="OpenDeleteDialogAsync"></Details>
-        </MudItem>
-        <Delete @ref="_deleteMessageBox" TitleIcon="@Icons.Material.Rounded.DeleteForever"  TitleContentText="Supprimer ?" 
-                MessageContentText="@((MarkupString)$"Voulez-vous vraiment supprimer le service <b>{_selectedServiceOfferMaster.Name}</b> ?" )" 
-                SubmitButtonText="Supprimer"
-                OnDeleteConfirmClick="OnDeleteItem"/>
-    }
 </MudGrid>
+@if (CanShowDetails)
+{
+    <Delete @ref="_deleteMessageBox" TitleIcon="@Icons.Material.Rounded.DeleteForever"  TitleContentText="Supprimer ?"
+            MessageContentText="@((MarkupString)$"Voulez-vous vraiment supprimer le service <b>{_selectedServiceOffer.Name}</b> ?" )"
+            SubmitButtonText="Supprimer"
+            OnDeleteConfirmClick="OnDeleteItem"/>
+}
 
 @code {
-    private readonly List<BreadcrumbItem> _items =
+    private readonly List<BreadcrumbItem> _breadcrumbItems =
     [
         new BreadcrumbItem("Accueil", href: "/"),
         new BreadcrumbItem("Settings", href: null, disabled: true),
@@ -97,7 +105,7 @@
     private Delete? _deleteMessageBox;
     
     private List<ServiceOfferDto> _serviceOffers =[];
-    private ServiceOfferDto _selectedServiceOfferMaster = new();
+    private ServiceOfferDto _selectedServiceOffer = new();
 
     private string _searchMasterText = "";
     private bool _loadingMaster = true;
@@ -108,7 +116,7 @@
         _loadingMaster = false;
     }
     
-    private bool CanShowDetails => _selectedServiceOfferMaster.Id != 0;
+    private bool CanShowDetails => _selectedServiceOffer.Id != 0;
     private bool CanHidePagerInfos => _serviceOffers.Count <= ServiceOfferConstants.PERPAGE_SIZE;
     
     private bool FilterMasterFunc(ServiceOfferDto element) => LookingFor(element, _searchMasterText);
@@ -120,6 +128,11 @@
     {
         _serviceOffers = await ServiceOfferService.ListAsync();
         StateHasChanged();
+    }
+
+    private void NavigateToDetails(ServiceOfferDto serviceOffer)
+    {
+        NavigationManager.NavigateTo($"Service-offers/Details/{serviceOffer.Id}");
     }
     
     private async Task OpenCreateDialogAsync()

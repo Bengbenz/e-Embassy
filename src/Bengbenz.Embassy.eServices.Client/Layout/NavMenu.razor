@@ -1,5 +1,5 @@
 ﻿<MudPaper Width="250px" Elevation="0" Class="py-3">
-	<MudNavMenu>
+	<MudNavMenu Bordered="true" Color="@Color.Primary">
 		<MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.TwoTone.Home">Accueil</MudNavLink>
 		<MudNavLink Href="/mes-demandes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.History">Mes demandes</MudNavLink>
 		<MudNavGroup Title="Services" Icon="@Icons.Material.TwoTone.DesignServices" @bind-Expanded=_expandedServiceMenu>
@@ -10,7 +10,7 @@
 </MudPaper>
 <MudSpacer/>
 <MudPaper Width="250px" Elevation="0" Class="py-3">
-	<MudNavMenu>
+	<MudNavMenu Bordered="true" Color="@Color.Primary">
 		<AuthorizeView>
 			<Authorized>
 				<MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.List">@context.User.Identity?.Name</MudNavLink>

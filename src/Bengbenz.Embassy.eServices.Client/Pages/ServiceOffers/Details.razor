@@ -1,9 +1,20 @@
+@page "/Service-offers/Details/{SelectedItemId:int}"
 @using Bengbenz.Embassy.eServices.Client.Services
 @using Bengbenz.Embassy.eServices.UseCases.ServiceOffers
 @using Bengbenz.Embassy.eServices.UseCases.ServiceOffers.Create
 @inject ServiceOfferService ServiceOfferService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<PageTitle>CAR e-Embassy - Service offers</PageTitle>
+
+<MudStack Row="true" Spacing="3" Class="pb-5">
+    <MudIcon Icon="@Icons.Material.Outlined.HomeRepairService" Size="Size.Large" />
+    <MudText Typo="Typo.h5" GutterBottom="true">Offres de services</MudText>
+    <MudSpacer/>
+    <MudBreadcrumbs Class="pt-0" Items="_items"></MudBreadcrumbs>
+</MudStack>
 
 @if (_selectedItem is null)
 {
@@ -11,28 +22,236 @@
 }
 else
 {
-    <MudCard Elevation="3" >
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudStack Row="true">
-                    <MudText Typo="Typo.h5">@_selectedItem.Name</MudText>
-                    <MudSpacer></MudSpacer>
-                    <MudTextField @bind-Value="_searchDetailsText" Placeholder="Rechercher"
-                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                                  IconSize="Size.Medium" Class="mt-0">
-                    </MudTextField>
-                </MudStack>
-                <MudDivider/>
-            </CardHeaderContent>
-        </MudCardHeader>
-        <MudCardContent>
-            Rien pour le moment
-        </MudCardContent>
-        <MudCardActions>
-            <MudSpacer />
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => OpenEditDialogAsync(_selectedItem)">Modifier</MudButton>
-        </MudCardActions>
-    </MudCard>
+    <MudGrid Spacing="4">
+        <MudItem xxl="3" xl="3" xs=3>
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudPaper Outlined="true" Class="px-4">
+                        <img src="img/armoiries_rca.png" width="100%" alt="@_selectedItem.Name"/>
+                    </MudPaper>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Rounded.ArrowBack" Color="Color.Default" OnClick="GoBackToList">Retour</MudButton>
+                    <MudSpacer/>
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Rounded.Edit" Color="Color.Primary" OnClick="() => OpenEditDialogAsync(_selectedItem)">Modifier</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xxl="6" xl="6" xs=6>
+            <MudCard Elevation="0" >
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="@Typo.h4">@_selectedItem.Name</MudText>
+                        <MudDivider/>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class="d-flex">
+                        <MudStack Row="true"  Class="fs-14 mb-4 me-3">
+                            <MudText Typo="Typo.caption">Créé par : </MudText>
+                            <MudText Typo="Typo.body2">@_selectedItem.CreatedBy</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Class="fs-14 mb-4 me-3">
+                            <MudText Typo="Typo.caption">Créé le : </MudText>
+                            <MudText Typo="Typo.body2">@_selectedItem.CreatedAt</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Class="fs-14 mb-4">
+                            <MudText Typo="Typo.caption">Modifié le : </MudText>
+                            <MudText Typo="Typo.body2">@_selectedItem.UpdatedAt</MudText>
+                        </MudStack>
+                    </div>
+                    <MudText Class="fs-14 fw-bold mb-3">Description:</MudText>
+                    <MudText Color="Color.Inherit" Class="fs-14">@_selectedItem.Description</MudText>
+                    <MudStack Row="true" Class="mb-3 mt-10 align-items-center">
+                        <MudText Typo="Typo.body2" Class="wd-100">Status:</MudText>
+                        <MudChip T="string" Variant="Variant.Text" Class="align-items-center  ms-5" Color="@(_selectedItem.IsPublished ? Color.Success : Color.Warning)">@(_selectedItem.IsPublished ? "Publié" : "Non publié")</MudChip>
+                    </MudStack>
+                    <MudStack Row="true" Class="mb-3 align-items-center">
+                        <MudText Typo="Typo.body2" Class="wd-100">Frais de dossier:</MudText>
+                        <MudText Typo="Typo.h4" Color="Color.Primary" Class="align-items-center  ms-5">@_selectedItem.UnitPrice €</MudText>
+                    </MudStack>
+                    <MudStack Row="true" Class="mb-3 align-items-center">
+                        <MudText Typo="Typo.body2" Class="wd-100">Affichage:</MudText>
+                        <MudChip T="string" Variant="Variant.Outlined" Class="align-items-center  ms-5" Color="@(_selectedItem.IsFeatured ? Color.Primary : Color.Default)">@(_selectedItem.IsFeatured ? "Mise en avant" : "Standard")</MudChip>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xxl="3" xl="3" xs=3>
+            <MudCard Elevation="3" >
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Commander</MudText>
+                        <MudDivider/>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    Rien pour le moment
+                </MudCardContent>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OpenEditDialogAsync(_selectedItem)">Faire une demande</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+    <MudTabs Elevation="2" Class="my-6" xs="12" ApplyEffectsToContainer="true" PanelClass="pa-6" >
+        <MudTabPanel Text="Etapes" Icon="@Icons.Material.Rounded.Api">
+            <div>
+                <MudText Typo="@Typo.h6">Comment faire ma demande de "@_selectedItem.Name" ?</MudText>
+                <br/>
+                <MudExpansionPanels MultiExpansion="false">
+                    <MudExpansionPanel>
+                        <TitleContent>
+                            <div class="d-flex" >
+                                <MudIcon Icon="@Icons.Material.Filled.Login" class="mr-3" Color="@Color.Primary"></MudIcon>
+                                <MudText Color="@Color.Primary"><strong>Étape 1:</strong> S’inscrire et Renseigner son profil</MudText>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <p>La première étape du processus d’obtention d’un Certificat de coutume commence par votre inscription sur <MudLink Href="Account/Register">https://e-ambassy.consulat.gov.cf/register</MudLink>
+                                Vous aurez besoin des informations sur votre passeport : numéro, date d’émission et date de validité.
+                                Une fois connecté, renseigner avec la plus grande précision les différents onglets et cliquer sur le bouton « SOUMETTRE LES INFORMATIONS » pour valider votre saisie.
+                                Votre inscription est permanente et vous permet d’effectuer l’ensemble des démarches consulaires (Passeport, Carte consulaire, Extrait de naissance, visa pour les bi-nationaux…etc)
+                            </p>
+                            <MudAlert Variant="Variant.Outlined" Severity="Severity.Warning">Passer directement à l’étape 2 si vous êtes déjà inscrit</MudAlert>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel >
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudIcon Icon="@Icons.Material.Rounded.FormatLineSpacing" class="mr-3" Color="@Color.Primary"></MudIcon>
+                                <MudText Color="@Color.Primary"><strong>Étape 2 :</strong> Renseigner le formulaire de demande</MudText>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <p>
+                                Se connecter à votre espace <MudLink Href="Account/Login">https://e-ambassy.consulat.gov.cf/login</MudLink>
+                                Accéder au formulaire de demande de "@_selectedItem.Name" en cliquant dans le menu sur "@_selectedItem.Name" puis
+                                Cliquer sur le bouton « FAIRE UNE DEMANDE »
+                            </p>
+                            <MudAlert Variant="Variant.Outlined" Severity="Severity.Info">
+                                Renseigner avec la plus grande précision les différents onglets et cliquer sur le bouton « SOUMETTRE LES INFORMATIONS » dans le dernier onglet pour valider votre saisie.
+                                Cliquer sur chaque onglet pour le dérouler et accéder aux champs à renseigner et cliquer dessus pour le refermer.
+                            </MudAlert>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel>
+                        <TitleContent >
+                            <div class="d-flex">
+                                <MudIcon Icon="@Icons.Material.Rounded.DeliveryDining" class="mr-3" Color="@Color.Primary"></MudIcon>
+                                <MudText Color="@Color.Primary"><strong>Étape 3: </strong> Choisissez votre mode de livraison</MudText>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <p>Choisissez votre mode paiement parmi les modes proposés pour cette demande. Voir l'onglet <b>Mode de livraison</b>.</p>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel>
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudIcon Icon="@Icons.Material.Filled.Payment" class="mr-3" Color="@Color.Primary"></MudIcon>
+                                <MudText Color="@Color.Primary"><strong>Étape 4:</strong> Payer votre demande en ligne si vous avez opté pour cette option</MudText>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <p>
+                                Une fois toutes les données renseignées et vérifiées, effectuer le règlement en ligne en allant dans votre panier ou Cliquer directement sur "Commander".
+                                Suivre les instructions sur la plateforme de paiement en ligne. Vous serez ensuite redirigé vers votre espace où le reçu de paiement sera disponible en retournant dans Demande puis sur le bouton « RECU ».
+                                Suivre votre demande
+                                Une fois votre dépôt confirmé, vous pouvez accéder à la quittance dans votre espace.
+                                Vérifier le statut de votre demande à tout moment en cliquant sur le bouton « DEMANDE » situé dans votre espace.
+                            </p>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Documents à fournir" Icon="@Icons.Material.Rounded.DocumentScanner">
+            <div>
+                <p>1. La preuve de votre nationalité centraficaine (photocopie du certificat de nationalité ou d’une pièce d’identité en cours de validité).</p>
+                <p>2. L’attestation de demande de <b>@_selectedItem.Name</b>.</p>
+                <p>3. Une enveloppe Chronopost si vous avez opté pour un retour par courrier.</p>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Méthode de paiements" Icon="@Icons.Material.Filled.Payments">
+            <div>
+                <MudGrid Spacing="5">
+                    <MudItem xs="3">
+                        <MudPaper Outlined="true">
+                            <MudStack Row="true" Class="mb-3 align-items-center">
+                                <MudImage Src="img/virement_bancaire.png" Height="100" Class="ml-3 border-radius: 5px; display:block"/>
+                                <MudText Class="align-items-center  ms-5">Virement bancaire</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudPaper Outlined="true" >
+                            <MudStack Row="true" Class="mb-3 align-items-center">
+                                <MudImage Src="img/paypal.png" Height="100" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5">Paypal</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudPaper Outlined="true" >
+                            <MudStack Row="true" Class="mb-3 align-items-center">
+                                <MudImage Src="img/visa_card.png" Height="100" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5">Carte Bancaire</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Méthode de livraison" Icon="@Icons.Material.Filled.DeliveryDining">
+            <div>
+                <MudGrid Spacing="5">
+                    <MudItem xs="6">
+                        <MudPaper Outlined="true">
+                            <MudStack Row="true" Class="mx-5 my-5 align-items-center">
+                                <MudIcon Icon="@Icons.Material.Rounded.AttachEmail" Size="@Size.Large" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5" Typo="@Typo.h6">Version numérique envoyée par mail</MudText>
+                                <MudSpacer />
+                                <MudText Typo="@Typo.h6" Color="@Color.Success">1.99 €</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudPaper Outlined="true" >
+                            <MudStack Row="true" Class="mx-5 my-5 align-items-center">
+                                <MudIcon Icon="@Icons.Material.Rounded.Domain" Size="@Size.Large" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5" Typo="@Typo.h6">Version papier à récupérer sur place</MudText>
+                                <MudSpacer />
+                                <MudText Typo="@Typo.h6" Color="@Color.Success">Gratuit</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudPaper Outlined="true" >
+                            <MudStack Row="true" Class="mx-5 my-5 align-items-center">
+                                <MudIcon Icon="@Icons.Material.Rounded.DeliveryDining" Size="@Size.Large" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5" Typo="@Typo.h6">Livraison par courrier standard</MudText>
+                                <MudSpacer />
+                                <MudText Typo="@Typo.h6" Color="@Color.Success">3.99 €</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudPaper Outlined="true" >
+                            <MudStack Row="true" Class="mx-5 my-5 align-items-center">
+                                <MudIcon Icon="@Icons.Material.Rounded.AirplaneTicket" Size="@Size.Large" Class="ml-3 border-radius: 5px; display:block" />
+                                <MudText Class="align-items-center  ms-5" Typo="@Typo.h6">Livraison par courrier international</MudText>
+                                <MudSpacer />
+                                <MudText Typo="@Typo.h6" Color="@Color.Success">10.99 €</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </div>
+        </MudTabPanel>
+    </MudTabs>
 }
 
 @code {
@@ -43,8 +262,14 @@ else
     [Parameter]
     public int SelectedItemId { get; set; }
     
+    private readonly List<BreadcrumbItem> _items =
+    [
+        new BreadcrumbItem("Accueil", href: "/"),
+        new BreadcrumbItem("Offres de services", href: "Service-offers"),
+        new BreadcrumbItem("Details", href: null, disabled: true)
+    ];
+    
     private ServiceOfferDto? _selectedItem { get; set; }
-    // private bool _loadingDetails = true;
     private string _searchDetailsText = "";
     
     private bool FilterDetailsFunc(ServiceOfferDto element) => LookingFor(element, _searchDetailsText);
@@ -55,7 +280,6 @@ else
     protected override async Task OnParametersSetAsync()
     { 
         _selectedItem = await ServiceOfferService.GetByIdAsync(SelectedItemId);
-        // _loadingDetails = false;
         await base.OnParametersSetAsync();
     }
     
@@ -87,5 +311,10 @@ else
     {
         _selectedItem = await ServiceOfferService.GetByIdAsync(SelectedItemId);
         StateHasChanged();
+    }
+
+    private void GoBackToList()
+    {
+        NavigationManager.NavigateTo("/Manage/Service-offers");
     }
 }
